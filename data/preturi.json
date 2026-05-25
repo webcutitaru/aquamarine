@@ -1,0 +1,193 @@
+{
+  "note": "Prețurile sunt orientative și se confirmă după inspectarea articolelor în magazin. Tarife finale pot varia după nivelul de deteriorare și tipul tratamentului necesar.",
+  "currency": "MDL",
+  "categories": [
+    {
+      "name": "Articole textile de zi cu zi",
+      "items": [
+        {
+          "service": "Costum bărbați (costum pantaloni+sacou)",
+          "price": "de la 320",
+          "description": "Curățare chimică set complet; finisare sacou și pantaloni, verificare pete la predare."
+        },
+        {
+          "service": "Cravată / papion",
+          "price": "de la 60",
+          "description": "Tratament delicat pentru mătase sau amestecuri; formă păstrată după finisare."
+        },
+        {
+          "service": "Cămașă bărbați",
+          "price": "de la 65",
+          "description": "Guler, manșete și plastron tratate separat dacă e nevoie; călcare profesională."
+        },
+        {
+          "service": "Pantaloni / fustă clasice",
+          "price": "de la 75",
+          "description": "Textile office și casual; atenție la cute și fermoare la predare."
+        },
+        {
+          "service": "Pulover / blazer",
+          "price": "de la 85",
+          "description": "Țesături tricotate sau structurate; risc redus de deformare prin suport dedicat."
+        },
+        {
+          "service": "Sacou singular",
+          "price": "de la 180",
+          "description": "Sacou din lână sau amestec; inspecție rever și umeri la recepție."
+        },
+        {
+          "service": "Geacă trench / trench scurt",
+          "price": "de la 250",
+          "description": "Impermeabilizări și captuseală evaluate înainte de ciclu."
+        },
+        {
+          "service": "Pardesiu lung",
+          "price": "de la 320",
+          "description": "Articole voluminoase; timp de uscare și finisare extins după tipul țesăturii."
+        }
+      ]
+    },
+    {
+      "name": "Rochii, mirease & ocazii",
+      "items": [
+        {
+          "service": "Rochie de zi",
+          "price": "de la 180",
+          "description": "Rochii midi sau scurte, straturi simple; detalii decorative tratate manual unde e cazul."
+        },
+        {
+          "service": "Rochie de seară / cocktail",
+          "price": "de la 280",
+          "description": "Materiale fine, paiete sau straturi suprapuse — flux adaptat după inspecție."
+        },
+        {
+          "service": "Rochie cununie simplă",
+          "price": "de la 390",
+          "description": "Voal ușor sau dantelă; protecție pentru ornamente fragile la predare."
+        },
+        {
+          "service": "Rochie mireasă voluminoasă (evaluare în magazin)",
+          "price": "de la 750",
+          "description": "Trenă, crinolină sau volum mare: tarif și termen stabilite după vizualizare."
+        },
+        {
+          "service": "Voaletă / tul detașabil",
+          "price": "de la 150",
+          "description": "Piese detașabile curățate separat pentru a proteja rochia principală."
+        },
+        {
+          "service": "Eșarfă ceremonială",
+          "price": "de la 90",
+          "description": "Mătase sau sintetic fin; evităm frecarea excesivă pe zone brodate."
+        }
+      ]
+    },
+    {
+      "name": "Blănuri & piele",
+      "items": [
+        {
+          "service": "Haină din blană natură lungă",
+          "price": "de la 1200",
+          "description": "Hidratare și suport voluminos; timp de lucru mărit față de textile clasice."
+        },
+        {
+          "service": "Haină din blană scurtă",
+          "price": "de la 900",
+          "description": "Blană compactă sau jachetă scurtă; aerisire controlată post-proces."
+        },
+        {
+          "service": "Vesta blană naturală",
+          "price": "de la 620",
+          "description": "Fără mâneci: atenție la guler și închidere; finisare uniformă."
+        },
+        {
+          "service": "Jachetă / geacă piele întoarsă sau piele dreaptă",
+          "price": "de la 450",
+          "description": "Ciclu delicat sau separat dacă materialele combinate o impun."
+        },
+        {
+          "service": "Geantă mare din piele",
+          "price": "de la 240",
+          "description": "Curățare exterioară și accesorii metalice protejate; interior evaluat la predare."
+        },
+        {
+          "service": "Geantă mică din piele",
+          "price": "de la 150",
+          "description": "Genți mici sau portofele; cusături și colțuri verificate după tratament."
+        },
+        {
+          "service": "Retuș culoare / vopsire parțială piele",
+          "price": "de la 390",
+          "description": "Zonă localizată sau uniformizare culoare doar dacă tehnica o permite.",
+          "note": "* Tariful depinde de culoarea țintă și suprafața tratată."
+        }
+      ],
+      "footnote": "Pentru vopsire integrală sau restaurări complexe se stabilește oferta după examinare."
+    },
+    {
+      "name": "Lenjerie, perdele & casa",
+      "items": [
+        {
+          "service": "Lenjerii pat dublu (cuprins set complet)",
+          "price": "de la 160",
+          "description": "Set complet cearșaf, fețe de pernă, pilotă ușoară dacă e inclusă în predare."
+        },
+        {
+          "service": "Față de masă mare",
+          "price": "de la 120",
+          "description": "Textil masă; pete alimentare indicate la recepție pentru tratament țintit."
+        },
+        {
+          "service": "Draperii sintetice ml",
+          "price": "de la 45 / ml",
+          "description": "Tarif la metru liniar măsurat la recepție; prindere și falduri notate."
+        },
+        {
+          "service": "Draperii naturale ml",
+          "price": "de la 58 / ml",
+          "description": "In, bumbac sau amestecuri naturale; contracție minimă prin protocol adaptat."
+        },
+        {
+          "service": "Jaluzele textile",
+          "price": "în funcție de suprafață",
+          "description": "Preț după măsură și tip material; ridicare de la domiciliu se discută separat."
+        },
+        {
+          "service": "Plapumi / pilots",
+          "price": "de la 220",
+          "description": "Volum mare, uscare etapizată; umplutură naturală sau sintetică declarată la predare."
+        },
+        {
+          "service": "Pături naturale mari",
+          "price": "de la 280",
+          "description": "Lână sau bumbac dens; întindere controlată pentru a păstra gabaritul."
+        }
+      ]
+    },
+    {
+      "name": "Încălțăminte",
+      "items": [
+        {
+          "service": "Pantofi clasici cu șiret",
+          "price": "de la 180",
+          "description": "Curățare exterior și talpă; șireturi scoase la cerere pentru tratament complet."
+        },
+        {
+          "service": "Pantofi sport / piele întoarsă",
+          "price": "de la 120",
+          "description": "Combinații piele-textil; structură aerisită după ciclu pentru miros rezidual."
+        },
+        {
+          "service": "Genți piele întoarsă tratament complet",
+          "price": "în funcție de dimensiuni",
+          "description": "Evaluare la recepție după dimensiune și grad de uzură; ofertă înainte de lucru."
+        },
+        {
+          "service": "Articole suede / năbuc tratament special",
+          "price": "evaluare în magazin",
+          "description": "Tratament dedicat fibrei deschise; risc de schimbare nuanță discutat la predare."
+        }
+      ]
+    }
+  ]
+}

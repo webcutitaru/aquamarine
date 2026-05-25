@@ -1,0 +1,10 @@
+<?php
+
+declare(strict_types=1);
+
+require dirname(__DIR__) . '/includes/init.php';
+require_once dirname(__DIR__) . '/includes/admin/auth.php';
+
+admin_logout();
+header('Location: login.php');
+exit;

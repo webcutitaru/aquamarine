@@ -1,0 +1,2 @@
+# Blochează acces HTTP direct la lead-uri dacă aveți AllowOverride activ
+Require all denied
