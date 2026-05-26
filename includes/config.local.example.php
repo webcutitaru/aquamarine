@@ -3,14 +3,18 @@
 declare(strict_types=1);
 
 /**
- * Copiați ca includes/config.local.php (nu se versionează).
+ * @deprecated Folosiți .env — vezi .env.example
+ *
+ * Copiați ca includes/config.local.php doar dacă nu folosiți .env (fallback).
+ * Preferat: cp .env.example .env și completați valorile.
  *
  * Setup MAMP:
- * 1. phpMyAdmin → creați baza `aquamarine`
- * 2. Importați database/schema.sql
- * 3. CLI: php database/seed_from_json.php
- * 4. CLI: php database/create_admin.php admin ParolaVoastraSigura
- * 5. Opțional: php database/import_leads_ndjson.php
+ * 1. composer install
+ * 2. cp .env.example .env
+ * 3. phpMyAdmin → creați baza `aquamarine`
+ * 4. Importați database/schema.sql
+ * 5. CLI: php database/seed_from_json.php
+ * 6. CLI: php database/create_admin.php admin ParolaVoastraSigura
  *
  * Panou: /admin/login.php
  */
@@ -22,7 +26,4 @@ return [
     'db_pass' => 'root',
     'db_charset' => 'utf8mb4',
     'db_port' => 8889,
-    // Opțional: suprascrieți setările B2B din config.php
-    // 'b2b_employee_discount_percent' => 12,
-    // 'b2b_delivery_note' => '...',
 ];

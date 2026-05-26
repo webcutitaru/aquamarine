@@ -15,6 +15,15 @@ function admin_require_auth(): void
         header('Location: login.php');
         exit;
     }
+
+    $last = $_SESSION['admin_last_activity'] ?? 0;
+    if (is_int($last) && $last > 0 && (time() - $last) > 1800) {
+        admin_logout();
+        header('Location: login.php?timeout=1');
+        exit;
+    }
+
+    $_SESSION['admin_last_activity'] = time();
 }
 
 function admin_login_url(): string
@@ -39,6 +48,7 @@ function admin_attempt_login(PDO $pdo, string $username, string $password): bool
     session_regenerate_id(true);
     $_SESSION['admin_logged_in'] = true;
     $_SESSION['admin_username'] = (string) $row['username'];
+    $_SESSION['admin_last_activity'] = time();
     unset($_SESSION['admin_csrf']);
     admin_csrf_token();
 
@@ -48,6 +58,9 @@ function admin_attempt_login(PDO $pdo, string $username, string $password): bool
 function admin_logout(): void
 {
     $_SESSION = [];
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_regenerate_id(true);
+    }
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
         setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], (bool) $p['secure'], (bool) $p['httponly']);

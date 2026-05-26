@@ -94,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && admin_csrf_verify()) {
             }
         }
     } catch (Throwable $e) {
+        error_log('Aquamarine admin oferte save failed: ' . $e->getMessage());
         flash_set('admin', 'danger', 'Eroare la salvare.');
     }
 

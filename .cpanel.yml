@@ -1,4 +1,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/aquamari1/public_html/
-    - /bin/cp -R * $DEPLOYPATH
+    - /bin/rsync -av --delete --exclude='.env' --exclude='includes/config.local.php' --exclude='data/contact_uploads/*' --exclude='data/leads.ndjson' --exclude='.git' --exclude='.DS_Store' --exclude='composer.phar' ./ $DEPLOYPATH

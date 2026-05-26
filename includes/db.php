@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/env.php';
+aquamarine_load_env();
+
 /**
  * @return array<string, mixed>|null
  */
@@ -10,6 +13,21 @@ function aquamarine_db_config(): ?array
     static $cached = null;
     if ($cached !== null) {
         return $cached === false ? null : $cached;
+    }
+
+    $name = aquamarine_env('DB_NAME');
+    $user = aquamarine_env('DB_USER');
+    if ($name !== null && $user !== null) {
+        $cached = [
+            'db_host' => aquamarine_env('DB_HOST', '127.0.0.1'),
+            'db_name' => $name,
+            'db_user' => $user,
+            'db_pass' => aquamarine_env('DB_PASS', ''),
+            'db_charset' => aquamarine_env('DB_CHARSET', 'utf8mb4'),
+            'db_port' => (int) (aquamarine_env('DB_PORT', '3306') ?? '3306'),
+        ];
+
+        return $cached;
     }
 
     $path = __DIR__ . '/config.local.php';
@@ -77,7 +95,8 @@ function aquamarine_pdo(): ?PDO
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ]);
-    } catch (PDOException) {
+    } catch (PDOException $e) {
+        error_log('Aquamarine DB connection failed: ' . $e->getMessage());
         $failed = true;
 
         return null;

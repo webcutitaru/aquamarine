@@ -88,6 +88,29 @@ function contact_process_photo_uploads(array $errMsgs): array
     return [$errors, $savedRel];
 }
 
+function contact_rate_limited(): bool
+{
+    $attempts = $_SESSION['contact_submit_attempts'] ?? [];
+    if (! is_array($attempts)) {
+        return false;
+    }
+    $now = time();
+    $recent = array_filter($attempts, static fn ($t) => is_int($t) && ($now - $t) < 3600);
+    $_SESSION['contact_submit_attempts'] = array_values($recent);
+
+    return count($recent) >= 5;
+}
+
+function contact_record_submit(): void
+{
+    $attempts = $_SESSION['contact_submit_attempts'] ?? [];
+    if (! is_array($attempts)) {
+        $attempts = [];
+    }
+    $attempts[] = time();
+    $_SESSION['contact_submit_attempts'] = $attempts;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (($postCompany = ($_POST['company'] ?? '')) !== '') {
         flash_set('contact', 'danger', (string) ($contactErrors['spam'] ?? ''));
@@ -97,6 +120,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (! public_csrf_verify()) {
         flash_set('contact', 'danger', (string) ($contactErrors['csrf'] ?? ''));
+        header('Location: ' . aquamarine_url('contact.php') . '#form');
+        exit;
+    }
+
+    if (contact_rate_limited()) {
+        flash_set('contact', 'danger', (string) ($contactErrors['rate_limit'] ?? ''));
         header('Location: ' . aquamarine_url('contact.php') . '#form');
         exit;
     }
@@ -159,7 +188,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $leadLang = aquamarine_locale();
     $ipHashed = hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
     $pdoContact = aquamarine_pdo();
-    if ($pdoContact instanceof PDO) {
+    if (! $pdoContact instanceof PDO) {
+        error_log('Aquamarine: contact form submitted without DB connection');
+        flash_set('contact', 'danger', (string) ($contactErrors['db_unavailable'] ?? ''));
+        header('Location: ' . aquamarine_url('contact.php') . '#form');
+        exit;
+    }
+
+    try {
         leads_insert(
             $pdoContact,
             $fullName,
@@ -172,25 +208,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ipHashed,
             $leadLang
         );
-    } else {
-        $lead = [
-            'ts' => gmdate('c'),
-            'name' => $fullName,
-            'phone' => $phone,
-            'email' => $email ?: null,
-            'service_interest' => $service ?: null,
-            'preferred_mag' => $preferredMag !== '' ? $preferredMag : null,
-            'message' => $message ?: null,
-            'attachments' => $attachments !== [] ? $attachments : null,
-            'ip_hashed' => $ipHashed,
-            'lang' => $leadLang,
-            'utm' => null,
-        ];
-        $leadLine = json_encode($lead, JSON_UNESCAPED_UNICODE);
-        if (is_string($leadLine)) {
-            file_put_contents(__DIR__ . '/data/leads.ndjson', $leadLine . PHP_EOL, FILE_APPEND | LOCK_EX);
-        }
+    } catch (Throwable $e) {
+        error_log('Aquamarine: lead insert failed: ' . $e->getMessage());
+        flash_set('contact', 'danger', (string) ($contactErrors['db_unavailable'] ?? ''));
+        header('Location: ' . aquamarine_url('contact.php') . '#form');
+        exit;
     }
+
+    contact_record_submit();
 
     $mailSent = false;
     if (($config['mail_enabled'] ?? false) === true) {

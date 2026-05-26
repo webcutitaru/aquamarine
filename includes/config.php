@@ -118,8 +118,8 @@ return [
     'facebook_url' => 'https://www.facebook.com/curatatoriehaineedinet/',
     'instagram_url' => 'https://www.instagram.com/aquamarine__md/',
     'google_maps_url' => '',
-    'mail_enabled' => false,
-    'contact_recipient_email' => 'contact@aquamarine.md',
+    'mail_enabled' => filter_var(aquamarine_env('MAIL_ENABLED', 'false') ?? 'false', FILTER_VALIDATE_BOOLEAN),
+    'contact_recipient_email' => aquamarine_env('CONTACT_RECIPIENT_EMAIL', 'contact@aquamarine.md') ?? 'contact@aquamarine.md',
     /** Discount pentru angajații partenerilor B2B (afișat pe business.php). */
     'b2b_employee_discount_percent' => 20,
     /** Text livrare/colectare B2B — condiții stabilite la telefon. */

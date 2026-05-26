@@ -14,7 +14,7 @@ require $root . '/includes/repository/offers.php';
 
 $pdo = aquamarine_pdo();
 if (! $pdo instanceof PDO) {
-    fwrite(STDERR, "Eroare: includes/config.local.php lipsește sau conexiunea DB a eșuat.\n");
+    fwrite(STDERR, "Eroare: .env lipsește sau conexiunea DB a eșuat.\n");
     exit(1);
 }
 

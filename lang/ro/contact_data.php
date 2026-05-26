@@ -62,6 +62,8 @@ return [
         'message_long' => 'Mesajul este prea lung.',
         'store' => 'Selectați un magazin valid sau lăsați câmpul gol.',
         'gdpr' => 'Trebuie să acceptați politica pentru a continua.',
+        'db_unavailable' => 'Nu am putut înregistra cererea momentan. Vă rugăm să ne sunați direct.',
+        'rate_limit' => 'Prea multe trimiteri. Încercați din nou peste o oră.',
     ],
     'flash' => [
         'mail_ok' => 'Mesaj expediat echipei. Vă vom răspunde pe baza datelor indicate.',

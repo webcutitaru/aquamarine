@@ -23,7 +23,9 @@ function pricing_fetch_catalog(?PDO $pdo, ?string $locale = null): array
     $locale ??= aquamarine_locale();
 
     if (! $pdo instanceof PDO) {
-        return pricing_fetch_catalog_from_json($locale);
+        error_log('Aquamarine: pricing catalog requested without DB connection');
+
+        return ['note' => '', 'currency' => 'MDL', 'categories' => []];
     }
 
     $hasRu = pricing_db_has_ru_columns($pdo);
