@@ -39,7 +39,7 @@ php database/create_admin.php admin ParolaVoastraSigura
 | `MAIL_ENABLED` | `true` / `false` |
 | `CONTACT_RECIPIENT_EMAIL` | Destinatar formular contact |
 
-**Nu versionați `.env`.** Pe producție, plasați `.env` în afara `public_html` (ex. `/home/aquamari1/.env`).
+**Nu versionați `.env`.** Pe producție, plasați `.env` în rădăcina proiectului sau în afara `public_html` (ex. `/home/aquamari1/.env` — detectat automat).
 
 ## Deploy cPanel
 

@@ -17,34 +17,20 @@ function aquamarine_db_config(): ?array
 
     $name = aquamarine_env('DB_NAME');
     $user = aquamarine_env('DB_USER');
-    if ($name !== null && $user !== null) {
-        $cached = [
-            'db_host' => aquamarine_env('DB_HOST', '127.0.0.1'),
-            'db_name' => $name,
-            'db_user' => $user,
-            'db_pass' => aquamarine_env('DB_PASS', ''),
-            'db_charset' => aquamarine_env('DB_CHARSET', 'utf8mb4'),
-            'db_port' => (int) (aquamarine_env('DB_PORT', '3306') ?? '3306'),
-        ];
-
-        return $cached;
-    }
-
-    $path = __DIR__ . '/config.local.php';
-    if (! is_readable($path)) {
+    if ($name === null || $user === null) {
         $cached = false;
 
         return null;
     }
 
-    $local = require $path;
-    if (! is_array($local)) {
-        $cached = false;
-
-        return null;
-    }
-
-    $cached = $local;
+    $cached = [
+        'db_host' => aquamarine_env('DB_HOST', '127.0.0.1'),
+        'db_name' => $name,
+        'db_user' => $user,
+        'db_pass' => aquamarine_env('DB_PASS', ''),
+        'db_charset' => aquamarine_env('DB_CHARSET', 'utf8mb4'),
+        'db_port' => (int) (aquamarine_env('DB_PORT', '3306') ?? '3306'),
+    ];
 
     return $cached;
 }
