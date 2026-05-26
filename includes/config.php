@@ -37,7 +37,7 @@ return [
     /**
      * Fișă Google (recenzii) — folosit peste tot pentru linkuri „Recenzii” / badge (locația Bălți).
      */
-    'google_business_reviews_url' => 'https://maps.app.goo.gl/Cgmnrm54NSbrPpQcA',
+    'google_business_reviews_url' => 'https://maps.app.goo.gl/sJBXTDbPwjopLn5k8',
     /** Medie afișată pe site (trebuie să coincidă cu Google Business). */
     'google_maps_rating' => 4.8,
     /** Număr total de recenzii pe Google (pentru bară și schema.org). */
@@ -60,7 +60,7 @@ return [
             'city' => 'Bălți',
             'address' => 'str. Decebal 130/A, mag. Kaufland',
             'page' => 'curatatorie-profesionala-haine-balti.php',
-            'maps_url' => 'https://maps.app.goo.gl/Cgmnrm54NSbrPpQcA',
+            'maps_url' => 'https://maps.app.goo.gl/sJBXTDbPwjopLn5k8',
             'phone_display' => '+373 (78) 831 555',
             'phone_e164' => '+37378831555',
             'opening_hours_spec' => [
@@ -88,7 +88,7 @@ return [
             'city' => 'Edineț',
             'address' => 'str. Ștefan Vodă 6',
             'page' => 'curatatorie-profesionala-haine-edinet.php',
-            'maps_url' => 'https://maps.app.goo.gl/EbEqmBpkM5Vvmzz8A',
+            'maps_url' => 'https://maps.app.goo.gl/Lfie4uqFRnCceYow6',
             'phone_display' => '+373 (79) 581 555',
             'phone_e164' => '+37379581555',
         ],
@@ -96,7 +96,7 @@ return [
             'city' => 'Briceni',
             'address' => 'str. Independenței 33',
             'page' => 'curatatorie-profesionala-haine-briceni.php',
-            'maps_url' => 'https://maps.app.goo.gl/hBVUpr3EAu8hxK1j6',
+            'maps_url' => 'https://maps.app.goo.gl/iN3R1CtcVEuCLCYk9',
             'phone_display' => '+373 (78) 484 544',
             'phone_e164' => '+37378484544',
         ],
@@ -104,7 +104,7 @@ return [
             'city' => 'Drochia',
             'address' => 'str. 31 August 27/6',
             'page' => 'curatatorie-profesionala-haine-drochia.php',
-            'maps_url' => 'https://maps.app.goo.gl/6AzGe2ZGe7KHACtS9',
+            'maps_url' => 'https://maps.app.goo.gl/aTj9EDpEFbNQnWoaA',
             'phone_display' => '+373 (78) 784 404',
             'phone_e164' => '+37378784404',
         ],

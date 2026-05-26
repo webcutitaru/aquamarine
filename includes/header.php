@@ -116,7 +116,7 @@ $isStagingHost = aquamarine_is_staging($config);
         </nav>
 
         <div class="flex shrink-0 items-center justify-end gap-2 lg:gap-3">
-            <div class="flex items-center rounded-xl border border-slate-200 bg-white p-0.5 text-xs font-bold" role="group" aria-label="<?= esc(t('lang.switch')) ?>">
+            <div class="hidden items-center rounded-xl border border-slate-200 bg-white p-0.5 text-xs font-bold lg:flex" role="group" aria-label="<?= esc(t('lang.switch')) ?>">
                 <a href="<?= esc($hreflangRo) ?>"
                    class="<?= $currentLocale === 'ro' ? 'rounded-lg bg-brand-700 px-2.5 py-1.5 text-white' : 'rounded-lg px-2.5 py-1.5 text-slate-600 hover:text-brand-800' ?> focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                    hreflang="ro" lang="ro"><?= esc(t('lang.ro')) ?></a>
