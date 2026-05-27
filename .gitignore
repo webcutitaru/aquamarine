@@ -5,3 +5,5 @@ data/contact_uploads/*
 vendor/
 composer.phar
 .DS_Store
+vendor_upload_ready.zip
+*.zip

@@ -70,7 +70,20 @@ Pe server, după primul deploy:
 ## Date
 
 - **Runtime:** toate datele dinamice (prețuri, lead-uri, oferte) sunt în MySQL
-- **Seed:** `data/preturi.json` — folosit o singură dată la instalare via `seed_from_json.php`
+- **Seed inițial (instalare veche):** `data/preturi.json` — via `seed_from_json.php`
+- **Catalog 2026:** `database/seed_prices_2026.sql` — import direct în MySQL (fără JSON)
+
+### Actualizare prețuri 2026 (pe server)
+
+1. Asigurați-vă că există coloanele bilingve: importați `database/migrate_i18n_pricing.sql` (o singură dată, dacă DB e veche)
+2. **Backup** recomandat pentru tabelele `price_categories` și `price_items`
+3. Import catalog:
+   - **phpMyAdmin:** import `database/seed_prices_2026.sql`
+   - **CLI:** `php database/seed_prices_2026.php`
+4. Verificați site-ul: `/servicii-si-preturi.php` și `/ru/servicii-si-preturi.php`
+5. Editări ulterioare din admin: `/admin/preturi.php`
+
+Importul **înlocuiește** catalogul de prețuri existent; lead-urile și ofertele homepage rămân neschimbate.
 
 ## Structură
 

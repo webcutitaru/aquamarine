@@ -85,4 +85,17 @@ if ($adminCount === 0) {
 }
 
 $out("OK: {$adminCount} cont(uri) admin");
+
+$priceCats = (int) $pdo->query('SELECT COUNT(*) FROM price_categories')->fetchColumn();
+$priceItems = (int) $pdo->query('SELECT COUNT(*) FROM price_items')->fetchColumn();
+$out("INFO: catalog prețuri — {$priceCats} categorii, {$priceItems} servicii");
+if ($priceItems === 0) {
+    if ($isCli) {
+        fwrite(STDERR, "WARN: catalog prețuri gol — importați database/seed_prices_2026.sql sau rulați: php database/seed_prices_2026.php\n");
+    } else {
+        echo "WARN: catalog prețuri gol — importați database/seed_prices_2026.sql\n";
+    }
+    exit(2);
+}
+
 exit(0);

@@ -122,6 +122,19 @@ if ($hasRuCols) {
 }
 
 $adminContent = static function () use ($catalog, $categoriesAdmin, $pdo, $hasRuCols, $noteRuVal): void {
+    $totalItems = 0;
+    foreach ($categoriesAdmin as $cat) {
+        if (is_array($cat)) {
+            $totalItems += count(pricing_fetch_items_by_category($pdo, (int) $cat['id']));
+        }
+    }
+    $firstCatId = 0;
+    foreach ($categoriesAdmin as $cat) {
+        if (is_array($cat)) {
+            $firstCatId = (int) $cat['id'];
+            break;
+        }
+    }
     ?>
     <form method="post" class="mt-4 rounded-xl border border-slate-200 bg-white p-5">
         <h2 class="font-semibold">Notă catalog</h2>
@@ -147,14 +160,54 @@ $adminContent = static function () use ($catalog, $categoriesAdmin, $pdo, $hasRu
         <button type="submit" class="mt-3 rounded-lg border border-cyan-700 px-4 py-2 text-sm font-semibold text-cyan-800 hover:bg-cyan-50">Adaugă categorie</button>
     </form>
 
+    <?php if ($categoriesAdmin !== []) { ?>
+    <div class="sticky top-0 z-10 mt-6 rounded-xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
+            <div class="min-w-0 flex-1 sm:max-w-md">
+                <label class="text-xs font-medium text-slate-500" for="admin-preturi-category">Categorie</label>
+                <select
+                    id="admin-preturi-category"
+                    class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+                >
+                    <?php foreach ($categoriesAdmin as $cat) {
+                        if (! is_array($cat)) {
+                            continue;
+                        }
+                        $cid = (int) $cat['id'];
+                        ?>
+                        <option value="<?= $cid ?>"<?= $cid === $firstCatId ? ' selected' : '' ?>><?= esc((string) $cat['name']) ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+            <div class="min-w-0 flex-1">
+                <label class="text-xs font-medium text-slate-500" for="admin-preturi-search">Căutare serviciu</label>
+                <input
+                    type="search"
+                    id="admin-preturi-search"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    placeholder="Nume, preț, descriere…"
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+        <p id="admin-preturi-count" class="mt-2 text-xs text-slate-500" aria-live="polite"></p>
+    </div>
+    <?php } ?>
+
+    <div id="admin-preturi-catalog" data-total-items="<?= $totalItems ?>">
     <?php foreach ($categoriesAdmin as $cat) {
         if (! is_array($cat)) {
             continue;
         }
         $catId = (int) $cat['id'];
         $items = pricing_fetch_items_by_category($pdo, $catId);
+        $catName = (string) $cat['name'];
         ?>
-        <section class="mt-8 rounded-xl border border-slate-200 bg-white p-5">
+        <section
+            class="admin-preturi-category mt-8 rounded-xl border border-slate-200 bg-white p-5<?= $catId !== $firstCatId ? ' hidden' : '' ?>"
+            data-category-id="<?= $catId ?>"
+            data-category-name="<?= esc($catName) ?>"
+        >
             <form method="post" class="flex flex-wrap items-end gap-3 border-b border-slate-100 pb-4">
                 <?= admin_csrf_field() ?>
                 <input type="hidden" name="action" value="update_category">
@@ -196,7 +249,18 @@ $adminContent = static function () use ($catalog, $categoriesAdmin, $pdo, $hasRu
                         continue;
                     }
                     $itemId = (int) $item['id'];
+                    $itemSearch = mb_strtolower(implode(' ', array_filter([
+                        $catName,
+                        (string) $item['service'],
+                        (string) ($item['service_ru'] ?? ''),
+                        (string) $item['price'],
+                        (string) ($item['description'] ?? ''),
+                        (string) ($item['description_ru'] ?? ''),
+                        (string) ($item['note'] ?? ''),
+                        (string) ($item['note_ru'] ?? ''),
+                    ])), 'UTF-8');
                     ?>
+                    <div class="admin-preturi-item space-y-1" data-search="<?= esc($itemSearch) ?>">
                     <form method="post" class="rounded-lg border border-slate-100 bg-slate-50 p-4">
                         <?= admin_csrf_field() ?>
                         <input type="hidden" name="action" value="update_item">
@@ -247,6 +311,7 @@ $adminContent = static function () use ($catalog, $categoriesAdmin, $pdo, $hasRu
                         <input type="hidden" name="item_id" value="<?= $itemId ?>">
                         <button type="submit" class="text-xs text-rose-600 hover:underline">Șterge</button>
                     </form>
+                    </div>
                 <?php } ?>
             </div>
 
@@ -265,6 +330,92 @@ $adminContent = static function () use ($catalog, $categoriesAdmin, $pdo, $hasRu
             </form>
         </section>
     <?php } ?>
+    </div>
+
+    <script>
+        (function () {
+            var catalog = document.getElementById('admin-preturi-catalog');
+            var categorySelect = document.getElementById('admin-preturi-category');
+            var searchInput = document.getElementById('admin-preturi-search');
+            var countEl = document.getElementById('admin-preturi-count');
+            if (!catalog || !categorySelect || !searchInput) return;
+
+            var sections = catalog.querySelectorAll('.admin-preturi-category');
+            var totalItems = parseInt(catalog.getAttribute('data-total-items') || '0', 10);
+            var minLen = 2;
+            var debounceTimer = null;
+
+            function normalize(value) {
+                return String(value || '').toLowerCase().trim();
+            }
+
+            function applyFilters() {
+                var query = normalize(searchInput.value);
+                var isSearch = query.length >= minLen;
+                var catId = categorySelect.value;
+                var visibleItems = 0;
+
+                sections.forEach(function (section) {
+                    var sectionId = section.getAttribute('data-category-id');
+                    var items = section.querySelectorAll('.admin-preturi-item');
+                    var visibleInSection = 0;
+
+                    items.forEach(function (item) {
+                        var hay = item.getAttribute('data-search') || '';
+                        var matchSearch = !isSearch || hay.indexOf(query) !== -1;
+                        var matchCat = isSearch || sectionId === catId;
+                        var show = matchSearch && matchCat;
+                        item.classList.toggle('hidden', !show);
+                        if (show) {
+                            visibleInSection++;
+                            visibleItems++;
+                        }
+                    });
+
+                    var showSection = isSearch ? visibleInSection > 0 : sectionId === catId;
+                    section.classList.toggle('hidden', !showSection);
+                });
+
+                if (isSearch) {
+                    countEl.textContent = visibleItems + ' servicii găsite din ' + totalItems;
+                } else {
+                    var section = catalog.querySelector('.admin-preturi-category[data-category-id="' + catId + '"]');
+                    var inCat = section ? section.querySelectorAll('.admin-preturi-item:not(.hidden)').length : 0;
+                    countEl.textContent = inCat + ' servicii în această categorie (' + totalItems + ' total)';
+                }
+            }
+
+            categorySelect.addEventListener('change', function () {
+                if (normalize(searchInput.value).length >= minLen) {
+                    searchInput.value = '';
+                }
+                try {
+                    sessionStorage.setItem('admin_preturi_cat', categorySelect.value);
+                } catch (e) {}
+                applyFilters();
+            });
+
+            searchInput.addEventListener('input', function () {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(applyFilters, 150);
+            });
+
+            searchInput.addEventListener('search', function () {
+                if (searchInput.value === '') {
+                    applyFilters();
+                }
+            });
+
+            try {
+                var saved = sessionStorage.getItem('admin_preturi_cat');
+                if (saved && categorySelect.querySelector('option[value="' + saved + '"]')) {
+                    categorySelect.value = saved;
+                }
+            } catch (e) {}
+
+            applyFilters();
+        })();
+    </script>
     <?php
 };
 
