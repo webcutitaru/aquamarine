@@ -1,0 +1,88 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * CLI: php database/check_setup.php
+ * Web: https://domeniu.md/database/check_setup.php (ștergeți accesul după setup)
+ */
+
+$root = dirname(__DIR__);
+require $root . '/includes/db.php';
+
+$isCli = PHP_SAPI === 'cli';
+if (! $isCli) {
+    header('Content-Type: text/plain; charset=utf-8');
+}
+
+$out = static function (string $line) use ($isCli): void {
+    if ($isCli) {
+        echo $line . PHP_EOL;
+    } else {
+        echo $line . "\n";
+    }
+};
+
+$fail = static function (string $line, int $code = 1) use ($isCli): never {
+    if ($isCli) {
+        fwrite(STDERR, $line . PHP_EOL);
+    } else {
+        echo 'FAIL: ' . $line . "\n";
+    }
+    exit($code);
+};
+
+$diagnose = aquamarine_db_diagnose();
+foreach ($diagnose['details'] ?? [] as $line) {
+    $out($line);
+}
+
+if (! $diagnose['ok']) {
+    $msg = strip_tags(str_replace(['<code>', '</code>'], '', $diagnose['message']));
+    $fail($msg);
+}
+
+$requiredTables = [
+    'admin_user',
+    'price_settings',
+    'price_categories',
+    'price_items',
+    'homepage_offers',
+    'leads',
+];
+
+$pdo = aquamarine_pdo();
+if (! $pdo instanceof PDO) {
+    $fail('conexiunea MySQL a eșuat după diagnostic');
+}
+
+$out('OK: conexiune MySQL');
+
+$missing = [];
+foreach ($requiredTables as $table) {
+    $stmt = $pdo->query(
+        'SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ' . $pdo->quote($table)
+    );
+    if ($stmt === false || $stmt->fetchColumn() === false) {
+        $missing[] = $table;
+    }
+}
+
+if ($missing !== []) {
+    $fail('tabele lipsă: ' . implode(', ', $missing) . ' — importați database/schema.sql');
+}
+
+$out('OK: toate tabelele necesare există');
+
+$adminCount = (int) $pdo->query('SELECT COUNT(*) FROM admin_user')->fetchColumn();
+if ($adminCount === 0) {
+    if ($isCli) {
+        fwrite(STDERR, "WARN: niciun cont admin — rulați: php database/create_admin.php\n");
+    } else {
+        echo "WARN: niciun cont admin — rulați: php database/create_admin.php\n";
+    }
+    exit(2);
+}
+
+$out("OK: {$adminCount} cont(uri) admin");
+exit(0);

@@ -45,12 +45,27 @@ php database/create_admin.php admin ParolaVoastraSigura
 
 Deploy automat via `.cpanel.yml` (rsync, exclude `.env`, uploads, git).
 
+### Fără Composer pe server — încărcare din local (FTP/SFTP/File Manager)
+
+**Composer** nu este „alt fel”: este managerul de dependențe PHP pentru proiect (citește `composer.json`, descarcă pachete în `vendor/`). Pe Mac rulezi local:
+
+```bash
+cd /Applications/MAMP/htdocs/aquamarine
+/Applications/MAMP/bin/php/php8.3.30/bin/php composer.phar install --no-dev --optimize-autoloader
+```
+
+Apoi urci pe hosting **tot proiectul inclusiv folderul `vendor/`** (altfel site-ul nu încarcă `.env`). Nu urca `.env` din dev; pe server pui `/home/aquamari1/.env` cu credențialele DB de producție.
+
+După fiecare cod nou din repo, repetă `composer install --no-dev` dacă s-a schimbat `composer.lock`, apoi reîncarcă fișierele sau doar `vendor/` dacă doar dependențele au fost actualizate.
+
 Pe server, după primul deploy:
 
-1. Creați `.env` în afara `public_html` cu credențialele DB producție
-2. Rulați `composer install --no-dev` pe server (sau includeți `vendor/` în deploy)
-3. Importați schema + seed dacă e instalare nouă
-4. Creați cont admin: `php database/create_admin.php`
+1. Creați `/home/aquamari1/.env` (în afara `public_html`) — șablon: variabilele din `.env.example`, cu `DB_HOST=localhost`, `DB_PORT=3306` și credențialele din cPanel → MySQL Databases
+2. Dacă **nu** ați încărcat `vendor/` din local (vezi mai sus): `cd ~/public_html && composer install --no-dev`
+3. Verificare: `php database/check_setup.php` (exit 0 = OK; exit 2 = lipsește cont admin)
+4. Dacă tabelele lipsesc: import `database/schema.sql` în phpMyAdmin
+5. Seed doar la instalare nouă (DB goală): `php database/seed_from_json.php`
+6. Cont admin: `php database/create_admin.php admin 'ParolaSiguraMin10'`
 
 ## Date
 

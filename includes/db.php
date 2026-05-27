@@ -40,6 +40,122 @@ function aquamarine_db_available(): bool
     return aquamarine_db_config() !== null;
 }
 
+/**
+ * @param array<string, mixed> $cfg
+ * @return list<string>
+ */
+function aquamarine_db_hosts_to_try(array $cfg): array
+{
+    $host = (string) ($cfg['db_host'] ?? '127.0.0.1');
+    $hosts = [$host];
+    if ($host === 'localhost') {
+        $hosts[] = '127.0.0.1';
+    } elseif ($host === '127.0.0.1') {
+        $hosts[] = 'localhost';
+    }
+
+    return array_values(array_unique($hosts));
+}
+
+/**
+ * @param array<string, mixed> $cfg
+ */
+function aquamarine_pdo_connect(array $cfg): PDO
+{
+    $name = (string) ($cfg['db_name'] ?? '');
+    $user = (string) ($cfg['db_user'] ?? '');
+    $pass = (string) ($cfg['db_pass'] ?? '');
+    $charset = (string) ($cfg['db_charset'] ?? 'utf8mb4');
+    $port = (int) ($cfg['db_port'] ?? 3306);
+
+    $last = null;
+    foreach (aquamarine_db_hosts_to_try($cfg) as $host) {
+        $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s', $host, $port, $name, $charset);
+        try {
+            return new PDO($dsn, $user, $pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+        } catch (PDOException $e) {
+            $last = $e;
+        }
+    }
+
+    if ($last instanceof PDOException) {
+        throw $last;
+    }
+
+    throw new PDOException('MySQL connection failed');
+}
+
+/**
+ * Verifică vendor, .env și conexiunea MySQL (pentru mesaje admin / CLI).
+ *
+ * @return array{ok: bool, message: string, details?: list<string>}
+ */
+function aquamarine_db_diagnose(): array
+{
+    $root = dirname(__DIR__);
+    $details = [];
+    $vendorOk = is_readable($root . '/vendor/autoload.php');
+    $details[] = $vendorOk ? 'vendor/autoload.php: OK' : 'vendor/autoload.php: LIPSEȘTE';
+
+    $envPath = aquamarine_find_env_file();
+    if ($envPath === null) {
+        return [
+            'ok' => false,
+            'message' => 'Fișierul <code>.env</code> nu a fost găsit în rădăcina site-ului sau în folderul părinte (ex. <code>/home/aquamari1/.env</code>).',
+            'details' => $details,
+        ];
+    }
+    $details[] = '.env: ' . $envPath;
+
+    $name = aquamarine_env('DB_NAME');
+    $user = aquamarine_env('DB_USER');
+    if ($name === null || $user === null) {
+        return [
+            'ok' => false,
+            'message' => 'În <code>.env</code> lipsesc <code>DB_NAME</code> sau <code>DB_USER</code> (verificați sintaxa fișierului).',
+            'details' => $details,
+        ];
+    }
+
+    $details[] = 'DB_NAME=' . $name;
+    $details[] = 'DB_USER=' . $user;
+    $details[] = 'DB_HOST=' . (aquamarine_env('DB_HOST', '127.0.0.1') ?? '127.0.0.1');
+    $passLen = strlen(aquamarine_env('DB_PASS', '') ?? '');
+    $details[] = 'DB_PASS: ' . $passLen . ' caractere (dacă parola reală are 13, dar aici e 11, ghilimelele nu s-au aplicat)';
+
+    $cfg = aquamarine_db_config();
+    if ($cfg === null) {
+        return ['ok' => false, 'message' => 'Configurația DB din <code>.env</code> este incompletă.', 'details' => $details];
+    }
+
+    try {
+        aquamarine_pdo_connect($cfg);
+    } catch (PDOException $e) {
+        $hint = '';
+        $msg = $e->getMessage();
+        $details[] = 'MySQL: ' . $msg;
+        if (stripos($msg, 'Access denied') !== false) {
+            $hint = ' User sau parolă greșită, sau userul nu e adăugat la bază în cPanel (Add User To Database → ALL PRIVILEGES). Parola cu <code>#</code> trebuie <code>DB_PASS="..."</code>.';
+        } elseif (stripos($msg, 'Unknown database') !== false) {
+            $hint = ' Baza <code>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</code> nu există — creați-o în cPanel → MySQL Databases.';
+        }
+
+        return [
+            'ok' => false,
+            'message' => 'Conexiunea MySQL a eșuat.' . $hint,
+            'details' => $details,
+        ];
+    }
+
+    $details[] = 'MySQL: conexiune OK';
+
+    return ['ok' => true, 'message' => '', 'details' => $details];
+}
+
 function aquamarine_pdo(): ?PDO
 {
     static $pdo = null;
@@ -60,12 +176,8 @@ function aquamarine_pdo(): ?PDO
         return null;
     }
 
-    $host = (string) ($cfg['db_host'] ?? '127.0.0.1');
     $name = (string) ($cfg['db_name'] ?? '');
     $user = (string) ($cfg['db_user'] ?? '');
-    $pass = (string) ($cfg['db_pass'] ?? '');
-    $charset = (string) ($cfg['db_charset'] ?? 'utf8mb4');
-    $port = (int) ($cfg['db_port'] ?? 3306);
 
     if ($name === '' || $user === '') {
         $failed = true;
@@ -73,14 +185,8 @@ function aquamarine_pdo(): ?PDO
         return null;
     }
 
-    $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s', $host, $port, $name, $charset);
-
     try {
-        $pdo = new PDO($dsn, $user, $pass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]);
+        $pdo = aquamarine_pdo_connect($cfg);
     } catch (PDOException $e) {
         error_log('Aquamarine DB connection failed: ' . $e->getMessage());
         $failed = true;

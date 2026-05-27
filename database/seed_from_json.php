@@ -18,7 +18,7 @@ if (! $pdo instanceof PDO) {
     exit(1);
 }
 
-$catalog = pricing_fetch_catalog_from_json();
+$catalog = pricing_fetch_catalog_from_json('ro');
 $pdo->beginTransaction();
 
 try {
