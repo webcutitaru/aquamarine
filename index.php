@@ -210,13 +210,13 @@ require __DIR__ . '/includes/header.php';
 
                 <div class="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-4 pb-6 pt-28 sm:px-6 lg:pb-10">
                     <div class="mx-auto flex max-w-6xl flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                        <div class="max-w-xl">
-                            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-brand-100/95" data-offers-eyebrow>
+                        <div class="min-w-0 w-full max-w-none sm:max-w-xl">
+                            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-brand-100/95 max-sm:tracking-[0.15em]" data-offers-eyebrow>
                                 <?= esc($offerOverlayEyebrow) ?>
                             </p>
-                            <h2 id="oferte-heading" class="font-display mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-4xl" data-offers-heading>
-                                <span class="block whitespace-nowrap" data-offers-heading-line1><?= esc($offerOverlayHeadingLine1) ?></span>
-                                <span class="mt-1 block text-pretty text-lg font-bold text-white/95 sm:text-xl lg:text-2xl<?= $offerOverlayHeadingLine2 === '' ? ' hidden' : '' ?>" data-offers-heading-line2><?= esc($offerOverlayHeadingLine2) ?></span>
+                            <h2 id="oferte-heading" class="font-display mt-2 font-bold tracking-tight text-white" data-offers-heading>
+                                <span class="block max-w-full text-[clamp(0.8125rem,3.4vw,1.25rem)] leading-tight sm:whitespace-nowrap sm:text-2xl lg:text-4xl" data-offers-heading-line1><?= esc($offerOverlayHeadingLine1) ?></span>
+                                <span class="mt-1 block max-w-full text-pretty text-base font-bold leading-snug text-white/95 sm:text-xl lg:text-2xl<?= $offerOverlayHeadingLine2 === '' ? ' hidden' : '' ?>" data-offers-heading-line2><?= esc($offerOverlayHeadingLine2) ?></span>
                             </h2>
                             <p class="mt-2 text-sm leading-relaxed text-white/85" data-offers-sub>
                                 <?= esc($offerOverlaySub) ?>
