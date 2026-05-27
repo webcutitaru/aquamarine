@@ -309,12 +309,9 @@ $serviceChoices = isset($c['services']) && is_array($c['services']) ? $c['servic
                         <?= esc((string) $feedback['message']) ?>
                     </div>
                 <?php } ?>
-                <form method="post" enctype="multipart/form-data" class="mt-8 space-y-6 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:gap-y-6 lg:space-y-0" autocomplete="off" novalidate>
+                <form method="post" enctype="multipart/form-data" class="relative mt-8 space-y-6 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:gap-y-6 lg:space-y-0" autocomplete="off" novalidate>
                     <?= public_csrf_field() ?>
-                    <div class="hidden" aria-hidden="true">
-                        <label for="company">Company URL</label>
-                        <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
-                    </div>
+                    <input type="text" name="company" value="" tabindex="-1" autocomplete="off" class="absolute -left-[9999px] h-px w-px opacity-0" aria-hidden="true">
 
                     <div class="lg:col-span-1">
                         <label class="block text-sm font-semibold text-slate-700" for="full_name"><?= esc((string) $c['name']) ?></label>

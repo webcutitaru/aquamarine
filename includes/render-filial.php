@@ -16,7 +16,7 @@ $fil = lang_data('filial');
 $cityLabel = aquamarine_city_label($filialaCity);
 
 $filLoc = aquamarine_location_by_city($config, $filialaCity);
-$filialaAddress = $filLoc !== null ? (string) ($filLoc['address'] ?? '') : '';
+$filialaAddress = $filLoc !== null ? aquamarine_location_address($filLoc) : '';
 $mapsUrl = $filLoc !== null ? trim((string) ($filLoc['maps_url'] ?? '')) : '';
 if ($mapsUrl === '') {
     $mapsQuery = $filialaCity . ', ' . $filialaAddress . ', ' . t('country.md');

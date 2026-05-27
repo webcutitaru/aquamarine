@@ -85,6 +85,10 @@ Pe server, după primul deploy:
 
 Importul **înlocuiește** catalogul de prețuri existent; lead-urile și ofertele homepage rămân neschimbate.
 
+### Corecții copy RO/RU (fără re-import complet)
+
+Pe un DB deja populat, rulați o dată `database/migrate_copy_feedback_2026.sql` (actualizează titlurile carousel, unități RU `шт.`/`кг`, câteva `service_ru`). Pentru catalog nou, folosiți `seed_prices_2026.sql` deja actualizat.
+
 ## Structură
 
 ```

@@ -225,6 +225,120 @@ function aquamarine_cities_badge(): string
     return implode(' · ', aquamarine_cities_line());
 }
 
+function aquamarine_city_locative_label(string $cityRo): string
+{
+    $map = [
+        'Bălți' => t('city.balti_locative'),
+        'Edineț' => t('city.edinet_locative'),
+        'Briceni' => t('city.briceni_locative'),
+        'Drochia' => t('city.drochia_locative'),
+    ];
+
+    return $map[$cityRo] ?? aquamarine_city_label($cityRo);
+}
+
+/**
+ * Locative phrase for RU copy, e.g. "в Бельцах, Единцах, Бричанах и Дрокии".
+ */
+function aquamarine_cities_locative_phrase(): string
+{
+    $cities = [
+        aquamarine_city_locative_label('Bălți'),
+        aquamarine_city_locative_label('Edineț'),
+        aquamarine_city_locative_label('Briceni'),
+        aquamarine_city_locative_label('Drochia'),
+    ];
+
+    if (aquamarine_locale() === 'ru') {
+        return 'в ' . $cities[0] . ', ' . $cities[1] . ', ' . $cities[2] . ' и ' . $cities[3];
+    }
+
+    $ro = aquamarine_cities_line();
+
+    return 'în ' . $ro[0] . ', ' . $ro[1] . ', ' . $ro[2] . ' și ' . $ro[3];
+}
+
+/**
+ * @param array<string, mixed> $loc
+ */
+function aquamarine_location_address(array $loc): string
+{
+    if (aquamarine_locale() === 'ru') {
+        $ru = trim((string) ($loc['address_ru'] ?? ''));
+        if ($ru !== '') {
+            return $ru;
+        }
+    }
+
+    return trim((string) ($loc['address'] ?? ''));
+}
+
+/**
+ * Split carousel heading into two display lines (DB may use "|" separator).
+ *
+ * @return array{0: string, 1: string}
+ */
+function aquamarine_heading_lines(string $heading, string $defaultLine1, string $defaultLine2): array
+{
+    $heading = trim($heading);
+    if (str_contains($heading, '|')) {
+        $parts = explode('|', $heading, 2);
+
+        return [trim($parts[0]), trim($parts[1] ?? '')];
+    }
+    if ($heading !== '') {
+        return [$heading, ''];
+    }
+
+    return [trim($defaultLine1), trim($defaultLine2)];
+}
+
+/**
+ * @return list<array{name: string, rating: int, when: string, text: string}>
+ */
+function aquamarine_home_reviews(): array
+{
+    static $cache = null;
+    if ($cache !== null) {
+        return $cache;
+    }
+
+    $path = dirname(__DIR__) . '/lang/reviews_home.php';
+    if (! is_readable($path)) {
+        $cache = [];
+
+        return $cache;
+    }
+
+    $rows = require $path;
+    if (! is_array($rows)) {
+        $cache = [];
+
+        return $cache;
+    }
+
+    $isRu = aquamarine_locale() === 'ru';
+    $out = [];
+    foreach ($rows as $row) {
+        if (! is_array($row)) {
+            continue;
+        }
+        $when = $isRu
+            ? trim((string) ($row['when_ru'] ?? $row['when'] ?? ''))
+            : trim((string) ($row['when'] ?? ''));
+        $out[] = [
+            'name' => trim((string) ($row['name'] ?? '')),
+            'rating' => (int) ($row['rating'] ?? 5),
+            'when' => $when,
+            'text' => trim((string) ($row['text'] ?? '')),
+        ];
+    }
+
+    $cache = $out;
+
+    return $cache;
+}
+
 /**
  * Structured page copy (lists, FAQ items, etc.).
  *

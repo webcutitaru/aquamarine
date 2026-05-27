@@ -35,10 +35,19 @@
   function syncOfferOverlay(slideEl) {
     if (!slideEl) return;
     var eyebrow = slideEl.getAttribute('data-slide-eyebrow') || '';
-    var heading = slideEl.getAttribute('data-slide-heading') || '';
+    var headingLine1 = slideEl.getAttribute('data-slide-heading-line1') || '';
+    var headingLine2 = slideEl.getAttribute('data-slide-heading-line2') || '';
     var sub = slideEl.getAttribute('data-slide-sub') || '';
     if (eyebrowEl) eyebrowEl.textContent = eyebrow;
-    if (headingEl) headingEl.textContent = heading;
+    if (headingEl) {
+      var h1 = headingEl.querySelector('[data-offers-heading-line1]');
+      var h2 = headingEl.querySelector('[data-offers-heading-line2]');
+      if (h1) h1.textContent = headingLine1;
+      if (h2) {
+        h2.textContent = headingLine2;
+        h2.classList.toggle('hidden', headingLine2 === '');
+      }
+    }
     if (subEl) subEl.textContent = sub;
   }
 

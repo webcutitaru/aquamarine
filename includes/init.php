@@ -23,6 +23,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 $config = require __DIR__ . '/config.php';
 
 require_once __DIR__ . '/i18n.php';
+require_once __DIR__ . '/offers-heading.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/repository/pricing.php';
 require_once __DIR__ . '/repository/offers.php';

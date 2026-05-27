@@ -23,24 +23,12 @@ $citiesBadge = aquamarine_cities_badge();
 $slidesOferte = offers_fetch_active_slides(aquamarine_pdo());
 $firstOfferSlide = isset($slidesOferte[0]) && is_array($slidesOferte[0]) ? $slidesOferte[0] : [];
 $offerOverlayEyebrow = (string) ($firstOfferSlide['eyebrow'] ?? offers_lang_overlay_defaults()['eyebrow']);
-$offerOverlayHeading = (string) ($firstOfferSlide['heading'] ?? ($offers['heading'] ?? ''));
+$offerOverlayHeadingRaw = (string) ($firstOfferSlide['heading'] ?? ($offers['heading'] ?? ''));
+[$offerOverlayHeadingLine1, $offerOverlayHeadingLine2] = offers_heading_lines_from_string($offerOverlayHeadingRaw);
 $offerOverlaySub = (string) ($firstOfferSlide['sub'] ?? ($offers['sub'] ?? ''));
 
-/**
- * Recenzii de pe Google Maps (conținut din recenziile publice afișate de clienți).
- *
- * @var list<array{name:string, rating:int, when:string, text:string}>
- */
-$reviewsHome = [
-    ['name' => 'Lilia Coțuc', 'rating' => 5, 'when' => 'acum 3 luni', 'text' => 'Nu credeam că paltonul meu, foarte murdar, mai poate fi salvat, dar a ieșit ca nou! Și cele două scurte au fost curățate cu multă atenție. Sunt foarte mulțumită și recomand din suflet!'],
-    ['name' => 'Adelina Grecu', 'rating' => 5, 'when' => 'acum 3 luni', 'text' => 'Mereu mulțumită de servicii!'],
-    ['name' => 'Cebanița Natalia', 'rating' => 5, 'when' => 'acum un an', 'text' => 'Foarte mulțumiți de serviciile dvs! Apelăm de fiecare dată cu încredere!'],
-    ['name' => 'Anna Polevaya', 'rating' => 5, 'when' => 'acum 3 luni · editată', 'text' => 'Am fost mulțumită de lucru făcut și de bun comportament.'],
-    ['name' => 'Grosu Xiusa', 'rating' => 5, 'when' => 'acum 7 luni · editată', 'text' => 'Am rămas foarte mulțumită, recomand.'],
-    ['name' => 'Diana Cerevatii', 'rating' => 5, 'when' => 'acum 2 ani', 'text' => 'Servicii de calitate, foarte mulțumită — mi-au curățat și un cojoc alb de blană naturală, excelent 💐'],
-    ['name' => 'Dana Burduh', 'rating' => 5, 'when' => 'acum un an', 'text' => 'Am folosit recent serviciile acestei curățătorii și am rămas foarte mulțumită! Articolele au fost returnate în stare excelentă, chiar și petele dificile au fost îndepărtate complet. Personalul este politicos. Raport calitate-preț excelent. Voi apela din nou cu siguranță și recomand tuturor!'],
-    ['name' => 'Gabi Rusu', 'rating' => 5, 'when' => 'acum un an', 'text' => 'Sunt foarte mulțumită de serviciile prestate de această companie, recomand cu încredere!'],
-];
+/** Recenzii Google Maps — text original (română), sursă unică. */
+$reviewsHome = aquamarine_home_reviews();
 
 $reviewSlidesDesktop = array_chunk($reviewsHome, 2);
 $reviewSlidesMobile = [];
@@ -154,12 +142,14 @@ require __DIR__ . '/includes/header.php';
                                 $slideEyebrow = (string) ($slide['eyebrow'] ?? '');
                                 $slideHeading = (string) ($slide['heading'] ?? '');
                                 $slideSub = (string) ($slide['sub'] ?? '');
+                                [$slideHeadingLine1, $slideHeadingLine2] = offers_heading_lines_from_string($slideHeading);
                                 ?>
                                 <div
                                     class="relative h-full min-w-0 shrink-0 grow-0 basis-full"
                                     data-carousel-slide
                                     data-slide-eyebrow="<?= esc($slideEyebrow) ?>"
-                                    data-slide-heading="<?= esc($slideHeading) ?>"
+                                    data-slide-heading-line1="<?= esc($slideHeadingLine1) ?>"
+                                    data-slide-heading-line2="<?= esc($slideHeadingLine2) ?>"
                                     data-slide-sub="<?= esc($slideSub) ?>"
                                     <?= $isFirst ? 'data-carousel-active' : '' ?>
                                 >
@@ -224,8 +214,9 @@ require __DIR__ . '/includes/header.php';
                             <p class="text-xs font-semibold uppercase tracking-[0.25em] text-brand-100/95" data-offers-eyebrow>
                                 <?= esc($offerOverlayEyebrow) ?>
                             </p>
-                            <h2 id="oferte-heading" class="font-display mt-2 text-2xl font-bold tracking-tight text-white text-balance sm:text-3xl lg:text-4xl" data-offers-heading>
-                                <?= esc($offerOverlayHeading) ?>
+                            <h2 id="oferte-heading" class="font-display mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-4xl" data-offers-heading>
+                                <span class="block whitespace-nowrap" data-offers-heading-line1><?= esc($offerOverlayHeadingLine1) ?></span>
+                                <span class="mt-1 block text-pretty text-lg font-bold text-white/95 sm:text-xl lg:text-2xl<?= $offerOverlayHeadingLine2 === '' ? ' hidden' : '' ?>" data-offers-heading-line2><?= esc($offerOverlayHeadingLine2) ?></span>
                             </h2>
                             <p class="mt-2 text-sm leading-relaxed text-white/85" data-offers-sub>
                                 <?= esc($offerOverlaySub) ?>
@@ -409,6 +400,12 @@ require __DIR__ . '/includes/header.php';
                 ?>
                 <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-700"><?= esc((string) ($reviewsUi['eyebrow'] ?? '')) ?></p>
                 <h2 class="font-display mt-2 text-pretty text-3xl font-bold tracking-tight text-ink lg:text-4xl"><?= esc((string) ($reviewsUi['title'] ?? '')) ?></h2>
+                <?php
+                $reviewsLanguageNote = trim((string) ($reviewsUi['language_note'] ?? ''));
+                if ($reviewsLanguageNote !== '') {
+                    ?>
+                    <p class="mt-2 max-w-2xl text-sm text-slate-600"><?= esc($reviewsLanguageNote) ?></p>
+                <?php } ?>
 
                 <?php if ($googleReviewsUrl !== '' && $googleRatingFormatted !== '' && $googleReviewCount > 0) { ?>
                     <div class="mt-6 flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-slate-100/90 px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-3.5">

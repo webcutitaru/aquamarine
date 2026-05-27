@@ -21,9 +21,10 @@ $ctaB = isset($b['cta']) && is_array($b['cta']) ? $b['cta'] : [];
 $b2bDiscount = isset($config['b2b_employee_discount_percent']) && is_numeric($config['b2b_employee_discount_percent'])
     ? (int) $config['b2b_employee_discount_percent']
     : 0;
-$b2bDeliveryNote = trim((string) ($config['b2b_delivery_note'] ?? ''));
-if ($b2bDeliveryNote === '') {
-    $b2bDeliveryNote = (string) ($b['delivery_default'] ?? '');
+$b2bDeliveryNote = trim((string) ($b['delivery_default'] ?? ''));
+$configDelivery = trim((string) ($config['b2b_delivery_note'] ?? ''));
+if ($b2bDeliveryNote === '' && $configDelivery !== '') {
+    $b2bDeliveryNote = $configDelivery;
 }
 
 $tel = rawurlencode((string) $config['phone_e164']);

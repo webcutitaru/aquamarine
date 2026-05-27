@@ -133,6 +133,7 @@ $adminContent = static function () use ($offers, $defaultContent): void {
             <div class="sm:col-span-2">
                 <label class="text-xs text-slate-500">Titlu (RO) *</label>
                 <input class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" name="heading" value="<?= esc($defaultContent['heading']) ?>" required>
+                <p class="mt-1 text-xs text-slate-500">Două rânduri pe homepage: folosiți <code class="rounded bg-slate-100 px-1">|</code> între rând 1 și rând 2 (ex.: Curățătorie profesională Aquamarine|în Bălți, Edineț…).</p>
             </div>
             <div class="sm:col-span-2">
                 <label class="text-xs text-slate-500">Titlu (RU)</label>

@@ -11,7 +11,7 @@ $pageDescription = (string) $s['meta']['description'];
 
 $catalog = pricing_fetch_catalog(aquamarine_pdo());
 $note = $catalog['note'];
-$currency = $catalog['currency'];
+$currency = (string) ($catalog['currency_display'] ?? $catalog['currency']);
 $categories = $catalog['categories'];
 
 require __DIR__ . '/includes/header.php';

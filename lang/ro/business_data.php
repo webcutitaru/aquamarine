@@ -7,7 +7,7 @@ return [
         'title' => 'Parteneriat Business · Curățare profesională pentru companii',
         'description' => 'Aquamarine — partener de curățare profesională pentru firme din Bălți, Edineț, Briceni și Drochia. Uniforme, lenjerie HoReCa, draperii și textile delicate, cu evaluare transparentă la predare.',
     ],
-    'delivery_default' => 'Colectare și livrare în Bălți, Edineț, Briceni și Drochia — condițiile se stabilesc la telefon, în funcție de volum și zonă.',
+    'delivery_default' => 'Colectare și livrare în Bălți, Edineț, Briceni și Drochia — condițiile și pragul minim se stabilesc la telefon, în funcție de volum și zonă.',
     'hero' => [
         'badge' => 'Parteneriat business',
         'h1' => 'Curățare profesională pentru echipe, spații și textile de firmă',
@@ -64,7 +64,7 @@ return [
         'volume_title' => 'Tarife la volum',
         'volume' => 'Negociem în funcție de volum și frecvență. Înainte de primul lot semnificativ primiți un deviz clar — la recepție sau după discuția telefonică.',
         'logistics_title' => 'Logistică',
-        'logistics_suffix' => 'Puteți preda la oricare dintre cele patru puncte de primire.',
+        'logistics_suffix' => ' Puteți preda articolele în oricare dintre cele patru puncte de primire.',
         'benefits_title' => 'Beneficii pentru echipă',
         'benefits_discount' => 'Program preferențial pentru angajații partenerilor noștri — reducere de :percent%, cu reguli comunicate la activarea parteneriatului.',
         'benefits_default' => 'Program preferențial pentru angajații partenerilor — condițiile se stabilesc odată cu acordul comercial.',

@@ -81,9 +81,16 @@ function offers_lang_overlay_defaults(): array
         $offers = [];
     }
 
+    $line1 = trim((string) ($offers['heading_line1'] ?? ''));
+    $line2 = trim((string) ($offers['heading_line2'] ?? ''));
+    $heading = trim((string) ($offers['heading'] ?? ''));
+    if ($heading === '' && ($line1 !== '' || $line2 !== '')) {
+        $heading = $line1 . '|' . $line2;
+    }
+
     return [
         'eyebrow' => 'Aquamarine',
-        'heading' => (string) ($offers['heading'] ?? ''),
+        'heading' => $heading,
         'sub' => (string) ($offers['sub'] ?? ''),
     ];
 }

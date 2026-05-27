@@ -12,8 +12,8 @@ UPDATE homepage_offers
 SET
     eyebrow = 'Aquamarine',
     eyebrow_ru = 'Aquamarine',
-    heading = 'Curățătorie profesională Aquamarine în Bălți, Edineț, Briceni și Drochia',
-    heading_ru = 'Профессиональная химчистка Aquamarine в Бельцах, Единце, Бричене и Дрокии',
+    heading = 'Curățătorie profesională Aquamarine|în Bălți, Edineț, Briceni și Drochia',
+    heading_ru = 'Профессиональная химчистка Aquamarine|Бельцы, Единец, Бричень, Дрокия',
     sub = 'Campaniile și reducerile din sezon — confirmați detaliile în magazin sau pe WhatsApp.',
     sub_ru = 'Сезонные акции и скидки — уточняйте детали в пункте приёма или в WhatsApp.'
 WHERE heading = '' OR heading IS NULL;

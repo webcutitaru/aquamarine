@@ -59,6 +59,7 @@ return [
         [
             'city' => 'Bălți',
             'address' => 'str. Decebal 130/A, mag. Kaufland',
+            'address_ru' => 'ул. Дечебал 130/A, маг. Kaufland',
             'page' => 'curatatorie-profesionala-haine-balti.php',
             'maps_url' => 'https://maps.app.goo.gl/sJBXTDbPwjopLn5k8',
             'phone_display' => '+373 (78) 831 555',
@@ -87,6 +88,7 @@ return [
         [
             'city' => 'Edineț',
             'address' => 'str. Ștefan Vodă 6',
+            'address_ru' => 'ул. Штефан Водэ 6',
             'page' => 'curatatorie-profesionala-haine-edinet.php',
             'maps_url' => 'https://maps.app.goo.gl/Lfie4uqFRnCceYow6',
             'phone_display' => '+373 (79) 581 555',
@@ -95,6 +97,7 @@ return [
         [
             'city' => 'Briceni',
             'address' => 'str. Independenței 33',
+            'address_ru' => 'ул. Independenței 33',
             'page' => 'curatatorie-profesionala-haine-briceni.php',
             'maps_url' => 'https://maps.app.goo.gl/iN3R1CtcVEuCLCYk9',
             'phone_display' => '+373 (78) 484 544',
@@ -103,6 +106,7 @@ return [
         [
             'city' => 'Drochia',
             'address' => 'str. 31 August 27/6',
+            'address_ru' => 'ул. 31 Августа 27/6',
             'page' => 'curatatorie-profesionala-haine-drochia.php',
             'maps_url' => 'https://maps.app.goo.gl/aTj9EDpEFbNQnWoaA',
             'phone_display' => '+373 (78) 784 404',
@@ -122,6 +126,6 @@ return [
     'contact_recipient_email' => aquamarine_env('CONTACT_RECIPIENT_EMAIL', 'contact@aquamarine.md') ?? 'contact@aquamarine.md',
     /** Discount pentru angajații partenerilor B2B (afișat pe business.php). */
     'b2b_employee_discount_percent' => 20,
-    /** Text livrare/colectare B2B — condiții stabilite la telefon. */
-    'b2b_delivery_note' => 'Colectare și livrare în Bălți, Edineț, Briceni și Drochia — condițiile și pragul minim se stabilesc la telefon, în funcție de volum și zonă.',
+    /** @deprecated Folosiți delivery_default din lang/ro|ru/business_data.php */
+    'b2b_delivery_note' => '',
 ];

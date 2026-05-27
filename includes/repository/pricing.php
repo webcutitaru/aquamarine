@@ -2,6 +2,32 @@
 
 declare(strict_types=1);
 
+function pricing_localize_unit(string $unit, string $locale): string
+{
+    if ($locale !== 'ru') {
+        return $unit;
+    }
+
+    $key = strtolower(trim($unit));
+
+    return match ($key) {
+        'unit.', 'unit' => 'шт.',
+        'kg' => 'кг',
+        default => $unit,
+    };
+}
+
+function pricing_currency_display(string $currency, string $locale): string
+{
+    if ($locale === 'ru' && strtoupper($currency) === 'MDL') {
+        $label = trim((string) (lang_data('servicii')['currency_label'] ?? ''));
+
+        return $label !== '' ? $label : $currency;
+    }
+
+    return $currency;
+}
+
 function pricing_locale_field(string $field, array $row, string $locale): string
 {
     if ($locale === 'ru') {
@@ -25,7 +51,7 @@ function pricing_fetch_catalog(?PDO $pdo, ?string $locale = null): array
     if (! $pdo instanceof PDO) {
         error_log('Aquamarine: pricing catalog requested without DB connection');
 
-        return ['note' => '', 'currency' => 'MDL', 'categories' => []];
+        return ['note' => '', 'currency' => 'MDL', 'currency_display' => 'MDL', 'categories' => []];
     }
 
     $hasRu = pricing_db_has_ru_columns($pdo);
@@ -67,10 +93,13 @@ function pricing_fetch_catalog(?PDO $pdo, ?string $locale = null): array
             if (! is_array($row)) {
                 continue;
             }
+            $description = $hasRu ? pricing_locale_field('description', $row, $locale) : (string) ($row['description'] ?? '');
+            $description = pricing_localize_unit($description, $locale);
+
             $item = [
                 'service' => $hasRu ? pricing_locale_field('service', $row, $locale) : (string) $row['service'],
                 'price' => (string) $row['price'],
-                'description' => $hasRu ? pricing_locale_field('description', $row, $locale) : (string) ($row['description'] ?? ''),
+                'description' => $description,
             ];
             $itemNote = $hasRu ? pricing_locale_field('note', $row, $locale) : (string) ($row['note'] ?? '');
             if ($itemNote !== '') {
@@ -90,7 +119,12 @@ function pricing_fetch_catalog(?PDO $pdo, ?string $locale = null): array
         $categories[] = $entry;
     }
 
-    return ['note' => $note, 'currency' => $currency, 'categories' => $categories];
+    return [
+        'note' => $note,
+        'currency' => $currency,
+        'currency_display' => pricing_currency_display($currency, $locale),
+        'categories' => $categories,
+    ];
 }
 
 function pricing_db_has_ru_columns(PDO $pdo): bool

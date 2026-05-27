@@ -20,7 +20,7 @@ if (! isset($filialeCardsShowPageCta)) {
             continue;
         }
         $c = isset($loc['city']) ? (string) $loc['city'] : '';
-        $a = isset($loc['address']) ? (string) $loc['address'] : '';
+        $a = aquamarine_location_address($loc);
         $page = isset($loc['page']) ? (string) $loc['page'] : '';
         $mapsUrl = trim((string) ($loc['maps_url'] ?? ''));
         if ($mapsUrl === '') {
