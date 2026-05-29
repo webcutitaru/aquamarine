@@ -18,7 +18,7 @@ if (! $diagnose['ok']) {
         }
         echo '</pre>';
     }
-    echo '<p>Diagnostic complet: <code>/database/check_setup.php</code> (deschideți în browser).</p>';
+    echo '<p>Diagnostic CLI: <code>php database/check_setup.php</code></p>';
     echo '<p>După ce conexiunea merge, importați <code>database/schema.sql</code> în phpMyAdmin și rulați <code>php database/create_admin.php</code>.</p>';
     echo '</body></html>';
     exit;

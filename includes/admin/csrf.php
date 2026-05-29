@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 function admin_csrf_token(): string
 {
+    aquamarine_session_start();
+
     if (! isset($_SESSION['admin_csrf']) || ! is_string($_SESSION['admin_csrf']) || $_SESSION['admin_csrf'] === '') {
         $_SESSION['admin_csrf'] = bin2hex(random_bytes(32));
     }
@@ -18,6 +20,8 @@ function admin_csrf_field(): string
 
 function admin_csrf_verify(): bool
 {
+    aquamarine_session_start();
+
     $sent = $_POST['_csrf'] ?? '';
     $expected = $_SESSION['admin_csrf'] ?? '';
 
@@ -26,6 +30,8 @@ function admin_csrf_verify(): bool
 
 function public_csrf_token(): string
 {
+    aquamarine_session_start();
+
     if (! isset($_SESSION['public_csrf']) || ! is_string($_SESSION['public_csrf']) || $_SESSION['public_csrf'] === '') {
         $_SESSION['public_csrf'] = bin2hex(random_bytes(32));
     }
@@ -40,6 +46,8 @@ function public_csrf_field(): string
 
 function public_csrf_verify(): bool
 {
+    aquamarine_session_start();
+
     $sent = $_POST['_csrf'] ?? '';
     $expected = $_SESSION['public_csrf'] ?? '';
 

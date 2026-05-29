@@ -1,0 +1,11 @@
+{
+  "name": "aquamarine-site",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/app.src.css -o ./assets/css/app.css --minify",
+    "watch:css": "tailwindcss -i ./assets/css/app.src.css -o ./assets/css/app.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

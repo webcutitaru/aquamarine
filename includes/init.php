@@ -5,10 +5,15 @@ declare(strict_types=1);
 require_once __DIR__ . '/env.php';
 aquamarine_load_env();
 
-$https = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-    || strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+function aquamarine_session_start(): void
+{
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        return;
+    }
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
+    $https = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+
     session_set_cookie_params([
         'lifetime' => 0,
         'path' => '/',
@@ -75,8 +80,10 @@ function aquamarine_is_production_host(array $config): bool
 
     $current = strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
     $currentHost = preg_replace('/:\d+$/', '', $current) ?? $current;
+    $currentHost = preg_replace('/^www\./', '', $currentHost);
+    $prodHostNorm = preg_replace('/^www\./', '', strtolower($prodHost));
 
-    return strtolower($prodHost) === $currentHost;
+    return $prodHostNorm === $currentHost;
 }
 
 /**
@@ -136,7 +143,9 @@ function aquamarine_canonical_path(): string
  */
 function aquamarine_locale_url(string $locale, array $config): string
 {
-    $base = aquamarine_request_base_url($config);
+    $base = aquamarine_is_production_host($config)
+        ? aquamarine_production_base_url($config)
+        : aquamarine_request_base_url($config);
     $path = aquamarine_path_without_locale();
     if ($path === '/' || $path === '/index.php') {
         return $locale === 'ru' ? $base . '/ru/' : $base . '/';
@@ -248,6 +257,8 @@ function esc(string|null $value): string
  */
 function flash_pull(string $key): array
 {
+    aquamarine_session_start();
+
     if (! isset($_SESSION['flash'][$key]) || ! is_array($_SESSION['flash'][$key])) {
         return ['type' => null, 'message' => null];
     }
@@ -263,5 +274,7 @@ function flash_pull(string $key): array
 
 function flash_set(string $key, string $type, string $message): void
 {
+    aquamarine_session_start();
+
     $_SESSION['flash'][$key] = ['type' => $type, 'message' => $message];
 }

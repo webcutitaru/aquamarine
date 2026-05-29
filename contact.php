@@ -90,6 +90,8 @@ function contact_process_photo_uploads(array $errMsgs): array
 
 function contact_rate_limited(): bool
 {
+    aquamarine_session_start();
+
     $attempts = $_SESSION['contact_submit_attempts'] ?? [];
     if (! is_array($attempts)) {
         return false;
@@ -103,6 +105,8 @@ function contact_rate_limited(): bool
 
 function contact_record_submit(): void
 {
+    aquamarine_session_start();
+
     $attempts = $_SESSION['contact_submit_attempts'] ?? [];
     if (! is_array($attempts)) {
         $attempts = [];

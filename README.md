@@ -7,11 +7,14 @@ Site PHP 8+ pentru curățătorie profesională Aquamarine (RO/RU), cu panou adm
 - PHP 8.0+ (extensii: PDO MySQL, finfo, mbstring, json)
 - MySQL 8+ / MariaDB 10.3+
 - Composer
+- Node.js 18+ (doar pentru build CSS Tailwind)
 
 ## Setup local (MAMP)
 
 ```bash
 composer install
+npm install
+npm run build:css
 cp .env.example .env
 # Editați .env cu credențialele MAMP (port 8889, user root)
 ```
@@ -38,12 +41,41 @@ php database/create_admin.php admin ParolaVoastraSigura
 | `DB_USER` / `DB_PASS` | Credențiale |
 | `MAIL_ENABLED` | `true` / `false` |
 | `CONTACT_RECIPIENT_EMAIL` | Destinatar formular contact |
+| `GTM_ID` | Google Tag Manager (ex. `GTM-XXXXXXX`) — opțional |
+| `GA4_ID` | Google Analytics 4 (ex. `G-XXXXXXXX`) — opțional |
+| `ALLOW_SETUP_CHECK` | `true` doar temporar — permite `/database/check_setup.php` în browser |
 
-**Nu versionați `.env`.** Pe producție, plasați `.env` în rădăcina proiectului sau în afara `public_html` (ex. `/home/aquamari1/.env` — detectat automat).
+**Nu versionați `.env`.** Pe producție, plasați `.env` **în afara** `public_html` (ex. `/home/aquamari1/.env` — detectat automat). Nu lăsați `.env` în `public_html`.
 
 ## Deploy cPanel
 
-Deploy automat via `.cpanel.yml` (rsync, exclude `.env`, uploads, git).
+Deploy automat via `.cpanel.yml` (rsync; exclude `.env`, `database/`, `node_modules/`).
+
+**Înainte de deploy:** rulați local `npm run build:css` — fișierul `assets/css/app.css` trebuie versionat / urcat pe server.
+
+**CSS:** după modificări de layout/clase Tailwind:
+
+```bash
+npm run build:css
+```
+
+### Securitate pe server (obligatoriu)
+
+1. `.env` în `/home/aquamari1/.env`, **nu** în `public_html`
+2. Aplicați [`deploy/nginx-snippet.conf`](deploy/nginx-snippet.conf) în cPanel (nginx ignoră parțial `.htaccess`)
+3. `ALLOW_SETUP_CHECK=false` în `.env` (implicit)
+4. Verificați după deploy:
+   - `curl -I https://aquamarine.md/sitemap.php` → 200
+   - `curl -I https://aquamarine.md/database/schema.sql` → 403
+   - `curl -I https://www.aquamarine.md/` → 301 → `aquamarine.md`
+
+### Go-live checklist
+
+- [ ] `php database/check_setup.php` (CLI) exit 0 pe server
+- [ ] Formular contact trimis → lead în admin + email (dacă `MAIL_ENABLED=true`)
+- [ ] Sitemap trimis în Google Search Console (`https://aquamarine.md/sitemap.php`)
+- [ ] `GTM_ID` sau `GA4_ID` setat în `.env` (opțional)
+- [ ] Imagini `assets/images/` prezente pe server (logo, slide-uri oferte)
 
 ### Fără Composer pe server — încărcare din local (FTP/SFTP/File Manager)
 
@@ -62,7 +94,7 @@ Pe server, după primul deploy:
 
 1. Creați `/home/aquamari1/.env` (în afara `public_html`) — șablon: variabilele din `.env.example`, cu `DB_HOST=localhost`, `DB_PORT=3306` și credențialele din cPanel → MySQL Databases
 2. Dacă **nu** ați încărcat `vendor/` din local (vezi mai sus): `cd ~/public_html && composer install --no-dev`
-3. Verificare: `php database/check_setup.php` (exit 0 = OK; exit 2 = lipsește cont admin)
+3. Verificare: `php database/check_setup.php` (CLI; exit 0 = OK)
 4. Dacă tabelele lipsesc: import `database/schema.sql` în phpMyAdmin
 5. Seed doar la instalare nouă (DB goală): `php database/seed_from_json.php`
 6. Cont admin: `php database/create_admin.php admin 'ParolaSiguraMin10'`
@@ -94,7 +126,9 @@ Pe un DB deja populat, rulați o dată `database/migrate_copy_feedback_2026.sql`
 ```
 includes/       bootstrap, config, DB, i18n, repositories
 admin/          panou CRM (lead-uri, prețuri, oferte)
-database/       schema SQL + scripturi CLI
+assets/css/     app.css (build Tailwind) + app.src.css
+database/       schema SQL + scripturi CLI (nu se deploy-ează)
+deploy/         snippet nginx pentru producție
 lang/ro|ru/     texte pagini
 data/           JSON seed + upload-uri contact (blocate HTTP)
 ```

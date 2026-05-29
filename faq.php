@@ -9,6 +9,37 @@ $navCurrent = 'faq';
 $pageTitle = (string) $f['meta']['title'];
 $pageDescription = (string) $f['meta']['description'];
 $items = isset($f['items']) && is_array($f['items']) ? $f['items'] : [];
+$extraHead = '';
+
+$faqSchemaEntities = [];
+foreach ($items as $item) {
+    if (! is_array($item)) {
+        continue;
+    }
+    $q = trim((string) ($item['q'] ?? ''));
+    $a = trim((string) ($item['a'] ?? ''));
+    if ($q === '' || $a === '') {
+        continue;
+    }
+    $faqSchemaEntities[] = [
+        '@type' => 'Question',
+        'name' => $q,
+        'acceptedAnswer' => [
+            '@type' => 'Answer',
+            'text' => $a,
+        ],
+    ];
+}
+
+if ($faqSchemaEntities !== []) {
+    $extraHead = '<script type="application/ld+json">'
+        . json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => $faqSchemaEntities,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        . '</script>';
+}
 
 require __DIR__ . '/includes/header.php';
 ?>

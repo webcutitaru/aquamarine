@@ -4,6 +4,7 @@ data/contact_uploads/*
 !data/contact_uploads/.gitkeep
 vendor/
 composer.phar
+node_modules/
 .DS_Store
 vendor_upload_ready.zip
 *.zip

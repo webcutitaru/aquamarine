@@ -168,7 +168,7 @@ require __DIR__ . '/includes/header.php';
                                         height="380"
                                         sizes="100vw"
                                         decoding="async"
-                                        fetchpriority="<?= $isFirst ? 'high' : 'low' ?>"
+                                        <?= $isFirst ? 'fetchpriority="high"' : 'loading="lazy" fetchpriority="low"' ?>
                                     >
                                     <?php if ($href !== '') { ?>
                                         </a>

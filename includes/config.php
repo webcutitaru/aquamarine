@@ -124,6 +124,10 @@ return [
     'google_maps_url' => '',
     'mail_enabled' => filter_var(aquamarine_env('MAIL_ENABLED', 'false') ?? 'false', FILTER_VALIDATE_BOOLEAN),
     'contact_recipient_email' => aquamarine_env('CONTACT_RECIPIENT_EMAIL', 'contact@aquamarine.md') ?? 'contact@aquamarine.md',
+    /** Google Tag Manager container ID (ex. GTM-XXXXXXX). Gol = dezactivat. */
+    'gtm_id' => trim((string) (aquamarine_env('GTM_ID', '') ?? '')),
+    /** Google Analytics 4 measurement ID (ex. G-XXXXXXXX). Gol = dezactivat. */
+    'ga4_id' => trim((string) (aquamarine_env('GA4_ID', '') ?? '')),
     /** Discount pentru angajații partenerilor B2B (afișat pe business.php). */
     'b2b_employee_discount_percent' => 20,
     /** @deprecated Folosiți delivery_default din lang/ro|ru/business_data.php */

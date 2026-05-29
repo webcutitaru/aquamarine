@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
     <title>Autentificare — Aquamarine Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/app.css">
 </head>
 <body class="flex min-h-screen items-center justify-center bg-slate-100 px-4">
     <form method="post" class="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">

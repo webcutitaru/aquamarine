@@ -1,9 +1,17 @@
-# HTTPS pe domeniul de producție
+# HTTPS + apex domain pe producție
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # www → non-www (canonical unic)
+    RewriteCond %{HTTP_HOST} ^www\.aquamarine\.md$ [NC]
+    RewriteRule ^ https://aquamarine.md%{REQUEST_URI} [L,R=301]
+
     RewriteCond %{HTTPS} off
     RewriteCond %{HTTP_HOST} ^(www\.)?aquamarine\.md$ [NC]
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # sitemap static vechi → dinamic
+    RewriteRule ^sitemap\.xml$ /sitemap.php [L,R=301]
 </IfModule>
 
 # Blochează acces direct la fișiere sensibile

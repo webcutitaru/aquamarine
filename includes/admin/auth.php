@@ -6,11 +6,15 @@ require_once __DIR__ . '/csrf.php';
 
 function admin_is_logged_in(): bool
 {
+    aquamarine_session_start();
+
     return ! empty($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 }
 
 function admin_require_auth(): void
 {
+    aquamarine_session_start();
+
     if (! admin_is_logged_in()) {
         header('Location: login.php');
         exit;
@@ -33,6 +37,8 @@ function admin_login_url(): string
 
 function admin_attempt_login(PDO $pdo, string $username, string $password): bool
 {
+    aquamarine_session_start();
+
     $stmt = $pdo->prepare('SELECT id, username, password_hash FROM admin_user WHERE username = ? LIMIT 1');
     $stmt->execute([trim($username)]);
     $row = $stmt->fetch();
@@ -57,6 +63,8 @@ function admin_attempt_login(PDO $pdo, string $username, string $password): bool
 
 function admin_logout(): void
 {
+    aquamarine_session_start();
+
     $_SESSION = [];
     if (session_status() === PHP_SESSION_ACTIVE) {
         session_regenerate_id(true);
@@ -70,6 +78,8 @@ function admin_logout(): void
 
 function admin_login_rate_limited(): bool
 {
+    aquamarine_session_start();
+
     $attempts = $_SESSION['admin_login_attempts'] ?? [];
     if (! is_array($attempts)) {
         return false;
@@ -83,6 +93,8 @@ function admin_login_rate_limited(): bool
 
 function admin_record_failed_login(): void
 {
+    aquamarine_session_start();
+
     $attempts = $_SESSION['admin_login_attempts'] ?? [];
     if (! is_array($attempts)) {
         $attempts = [];
@@ -93,5 +105,7 @@ function admin_record_failed_login(): void
 
 function admin_username(): string
 {
+    aquamarine_session_start();
+
     return (string) ($_SESSION['admin_username'] ?? 'admin');
 }

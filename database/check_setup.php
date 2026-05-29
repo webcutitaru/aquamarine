@@ -8,12 +8,22 @@ declare(strict_types=1);
  */
 
 $root = dirname(__DIR__);
-require $root . '/includes/db.php';
+require_once $root . '/includes/env.php';
+aquamarine_load_env();
 
 $isCli = PHP_SAPI === 'cli';
 if (! $isCli) {
+    $allowWeb = filter_var(aquamarine_env('ALLOW_SETUP_CHECK', 'false') ?? 'false', FILTER_VALIDATE_BOOLEAN);
+    if (! $allowWeb) {
+        http_response_code(403);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Acces interzis. Rulați: php database/check_setup.php\n";
+        exit;
+    }
     header('Content-Type: text/plain; charset=utf-8');
 }
+
+require $root . '/includes/db.php';
 
 $out = static function (string $line) use ($isCli): void {
     if ($isCli) {

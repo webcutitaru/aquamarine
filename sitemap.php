@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/includes/env.php';
+aquamarine_load_env();
+
 /** @var array<string, mixed> $config */
 $config = require __DIR__ . '/includes/config.php';
 
-$base = aquamarine_production_base_url($config);
+$base = rtrim((string) ($config['production_base_url'] ?? 'https://aquamarine.md'), '/');
 
 $paths = [
     '/',
-    '/index.php',
     '/filiale.php',
     '/curatatorie-profesionala-haine-balti.php',
     '/curatatorie-profesionala-haine-edinet.php',

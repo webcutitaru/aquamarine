@@ -30,6 +30,12 @@ $hreflangRo = aquamarine_locale_url('ro', $config);
 $hreflangRu = aquamarine_locale_url('ru', $config);
 $currentLocale = aquamarine_locale();
 $isStagingHost = aquamarine_is_staging($config);
+
+$fullTitle = $pageTitle === $config['site_name'] ? $pageTitle : $pageTitle . ' · Aquamarine';
+$ogLocale = $currentLocale === 'ru' ? 'ru_RU' : 'ro_RO';
+$ogImage = aquamarine_production_base_url($config) . '/assets/images/aquamarine_logo_inline.png';
+$gtmId = trim((string) ($config['gtm_id'] ?? ''));
+$ga4Id = trim((string) ($config['ga4_id'] ?? ''));
 ?>
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="<?= esc($currentLocale) ?>">
@@ -43,57 +49,40 @@ $isStagingHost = aquamarine_is_staging($config);
     <link rel="alternate" hreflang="ro" href="<?= esc($hreflangRo) ?>">
     <link rel="alternate" hreflang="ru" href="<?= esc($hreflangRu) ?>">
     <link rel="alternate" hreflang="x-default" href="<?= esc($hreflangRo) ?>">
-    <title><?= esc($pageTitle === $config['site_name'] ? $pageTitle : $pageTitle . ' · Aquamarine') ?></title>
+    <title><?= esc($fullTitle) ?></title>
     <meta name="description" content="<?= esc($pageDescription) ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="<?= esc((string) $config['site_name']) ?>">
+    <meta property="og:title" content="<?= esc($fullTitle) ?>">
+    <meta property="og:description" content="<?= esc($pageDescription) ?>">
+    <meta property="og:url" content="<?= esc($canonicalHref) ?>">
+    <meta property="og:locale" content="<?= esc($ogLocale) ?>">
+    <meta property="og:locale:alternate" content="<?= esc($currentLocale === 'ru' ? 'ro_RO' : 'ru_RU') ?>">
+    <meta property="og:image" content="<?= esc($ogImage) ?>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= esc($fullTitle) ?>">
+    <meta name="twitter:description" content="<?= esc($pageDescription) ?>">
+    <meta name="twitter:image" content="<?= esc($ogImage) ?>">
+    <link rel="icon" href="<?= esc(aquamarine_asset_url('images/aquamarine_logo_inline.png')) ?>" type="image/png">
+    <link rel="apple-touch-icon" href="<?= esc(aquamarine_asset_url('images/aquamarine_logo_inline.png')) ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#ecfeff',
-                            100: '#cffafe',
-                            200: '#a5f3fc',
-                            300: '#67e8f9',
-                            400: '#22d3ee',
-                            500: '#06b6d4',
-                            600: '#0891b2',
-                            700: '#0e7490',
-                            800: '#155e75',
-                            900: '#164e63'
-                        },
-                        ink: '#0b1220'
-                    },
-                    fontFamily: {
-                        sans: ['DM Sans', 'system-ui', 'sans-serif'],
-                        display: ['Outfit', 'system-ui', 'sans-serif']
-                    },
-                    boxShadow: {
-                        soft: '0 18px 50px rgba(11,18,32,0.10)'
-                    },
-                    keyframes: {
-                        iconNudge: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '35%': { transform: 'translateY(-3px)' },
-                            '65%': { transform: 'translateY(1px)' }
-                        }
-                    },
-                    animation: {
-                        'icon-nudge': 'iconNudge 0.45s cubic-bezier(0.34, 1.45, 0.64, 1) both'
-                    }
-                }
-            }
-        };
-    </script>
+    <link rel="stylesheet" href="<?= esc(aquamarine_asset_url('css/app.css')) ?>">
+    <?php if ($gtmId !== '') { ?>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','<?= esc($gtmId) ?>');</script>
+    <?php } elseif ($ga4Id !== '') { ?>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= esc($ga4Id) ?>"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= esc($ga4Id) ?>');</script>
+    <?php } ?>
     <?php if (! empty($extraHead)) {
         echo $extraHead;
     } ?>
 </head>
 <body class="min-h-screen bg-slate-50 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-slate-800 antialiased md:pb-0">
+<?php if ($gtmId !== '') { ?>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?= esc($gtmId) ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<?php } ?>
 <a href="#continut" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50">
     <?= esc(t('skip.content')) ?>
 </a>
@@ -101,7 +90,7 @@ $isStagingHost = aquamarine_is_staging($config);
 <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-gradient-to-b from-brand-50/40 via-white/90 to-white/95 backdrop-blur">
     <div class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:flex-nowrap lg:items-center lg:gap-2 xl:gap-4">
         <a href="<?= esc(aquamarine_url('index.php')) ?>" class="flex shrink-0 items-center rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
-            <img src="<?= esc(aquamarine_asset_url('images/aquamarine_logo_inline.png')) ?>" alt="Aquamarine" class="h-8 w-auto sm:h-9 lg:h-10" width="2492" height="411" decoding="async">
+            <img src="<?= esc(aquamarine_asset_url('images/aquamarine_logo_inline.png')) ?>" alt="Aquamarine" class="h-8 w-auto sm:h-9 lg:h-10" width="243" height="40" decoding="async">
         </a>
 
         <nav class="hidden min-w-0 shrink lg:flex lg:flex-1 lg:items-center lg:justify-center lg:gap-0.5 xl:gap-1" aria-label="<?= esc(t('aria.main_nav')) ?>">
