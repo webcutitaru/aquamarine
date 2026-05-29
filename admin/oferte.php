@@ -60,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && admin_csrf_verify()) {
         if ($action === 'create') {
             $alt = trim((string) ($_POST['alt'] ?? ''));
             $altRu = trim((string) ($_POST['alt_ru'] ?? ''));
-            $href = trim((string) ($_POST['href'] ?? ''));
             $active = isset($_POST['is_active']);
             $sort = (int) ($_POST['sort_order'] ?? 0);
             $content = offers_content_from_post();
@@ -70,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && admin_csrf_verify()) {
             } elseif ($content['heading'] === '') {
                 flash_set('admin', 'danger', 'Titlul (RO) este obligatoriu.');
             } else {
-                offers_create($pdo, $imagePath, $alt, $href, $active, $sort, $altRu, $content);
+                offers_create($pdo, $imagePath, $alt, '', $active, $sort, $altRu, $content);
                 flash_set('admin', 'success', 'Banner adăugat.');
             }
         } elseif ($action === 'update') {
@@ -78,12 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && admin_csrf_verify()) {
             if ($id > 0) {
                 $alt = trim((string) ($_POST['alt'] ?? ''));
                 $altRu = trim((string) ($_POST['alt_ru'] ?? ''));
-                $href = trim((string) ($_POST['href'] ?? ''));
                 $active = isset($_POST['is_active']);
                 $sort = (int) ($_POST['sort_order'] ?? 0);
                 $content = offers_content_from_post();
                 $newImage = admin_process_offer_upload($offersDir);
-                offers_update($pdo, $id, $alt, $href, $active, $sort, $newImage, $altRu, $content);
+                offers_update($pdo, $id, $alt, '', $active, $sort, $newImage, $altRu, $content);
                 flash_set('admin', 'success', 'Banner actualizat.');
             }
         } elseif ($action === 'delete') {
@@ -155,10 +153,6 @@ $adminContent = static function () use ($offers, $defaultContent): void {
                 <label class="text-xs text-slate-500">Text alternativ imagine (RU)</label>
                 <input class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" name="alt_ru" placeholder="Opțional — pentru versiunea /ru/">
             </div>
-            <div class="sm:col-span-2">
-                <label class="text-xs text-slate-500">Link (href)</label>
-                <input class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" name="href" placeholder="servicii-si-preturi.php" value="servicii-si-preturi.php">
-            </div>
             <label class="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="is_active" value="1" checked> Activ pe homepage
             </label>
@@ -215,10 +209,6 @@ $adminContent = static function () use ($offers, $defaultContent): void {
                         <div>
                             <label class="text-xs text-slate-500">Alt imagine (RU)</label>
                             <input class="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm" name="alt_ru" value="<?= esc((string) ($offer['alt_ru'] ?? '')) ?>">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500">Href</label>
-                            <input class="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm" name="href" value="<?= esc((string) $offer['href']) ?>">
                         </div>
                         <div>
                             <label class="text-xs text-slate-500">Ordine</label>

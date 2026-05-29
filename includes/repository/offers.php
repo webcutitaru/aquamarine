@@ -157,7 +157,7 @@ function offers_default_slides(): array
         [
             'image' => offers_public_image_url('assets/images/oferte/aquamarine_cleaning_system.webp'),
             'alt' => (string) ($offers['slide1_alt'] ?? ''),
-            'href' => 'servicii-si-preturi.php',
+            'href' => '',
             'eyebrow' => $overlay['eyebrow'],
             'heading' => $overlay['heading'],
             'sub' => $overlay['sub'],
@@ -165,7 +165,7 @@ function offers_default_slides(): array
         [
             'image' => offers_public_image_url('assets/images/oferte/aquamarine_cleaning_system_slider.webp'),
             'alt' => (string) ($offers['slide2_alt'] ?? ''),
-            'href' => 'servicii-si-preturi.php',
+            'href' => '',
             'eyebrow' => $overlay['eyebrow'],
             'heading' => $overlay['heading'],
             'sub' => $overlay['sub'],

@@ -130,10 +130,6 @@ require __DIR__ . '/includes/header.php';
 
                                 $img = isset($slide['image']) ? (string) $slide['image'] : '';
                                 $alt = isset($slide['alt']) ? (string) $slide['alt'] : '';
-                                $href = isset($slide['href']) ? (string) $slide['href'] : '';
-                                if ($href !== '' && ! str_starts_with($href, 'http')) {
-                                    $href = aquamarine_url($href);
-                                }
                                 if ($img === '') {
                                     continue;
                                 }
@@ -153,26 +149,16 @@ require __DIR__ . '/includes/header.php';
                                     data-slide-sub="<?= esc($slideSub) ?>"
                                     <?= $isFirst ? 'data-carousel-active' : '' ?>
                                 >
-                                    <?php if ($href !== '') { ?>
-                                        <a
-                                            href="<?= esc($href) ?>"
-                                            class="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
-                                            data-carousel-slide-link
-                                        >
-                                    <?php } ?>
                                     <img
                                         src="<?= esc($img) ?>"
                                         alt="<?= esc($alt) ?>"
-                                        class="<?= $href !== '' ? 'absolute inset-0 ' : '' ?>h-full w-full object-cover object-center"
+                                        class="h-full w-full object-cover object-center"
                                         width="1200"
                                         height="380"
                                         sizes="100vw"
                                         decoding="async"
                                         <?= $isFirst ? 'fetchpriority="high"' : 'loading="lazy" fetchpriority="low"' ?>
                                     >
-                                    <?php if ($href !== '') { ?>
-                                        </a>
-                                    <?php } ?>
                                 </div>
                             <?php } ?>
                         </div>
@@ -443,7 +429,7 @@ require __DIR__ . '/includes/header.php';
                             data-reviews-prev
                             aria-label="<?= esc((string) ($reviewsUi['prev'] ?? '')) ?>"
                         >
-                            <span class="sr-only"><?= esc((string) ($offers['prev_sr'] ?? '')) ?></span>
+                            <span class="sr-only"><?= esc((string) ($reviewsUi['prev_sr'] ?? '')) ?></span>
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/>
                             </svg>
@@ -474,7 +460,7 @@ require __DIR__ . '/includes/header.php';
                             data-reviews-next
                             aria-label="<?= esc((string) ($reviewsUi['next'] ?? '')) ?>"
                         >
-                            <span class="sr-only"><?= esc((string) ($offers['next_sr'] ?? '')) ?></span>
+                            <span class="sr-only"><?= esc((string) ($reviewsUi['next_sr'] ?? '')) ?></span>
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
                             </svg>
@@ -497,7 +483,7 @@ require __DIR__ . '/includes/header.php';
                             data-reviews-prev
                             aria-label="<?= esc((string) ($reviewsUi['prev_group'] ?? '')) ?>"
                         >
-                            <span class="sr-only"><?= esc((string) ($offers['prev_sr'] ?? '')) ?></span>
+                            <span class="sr-only"><?= esc((string) ($reviewsUi['prev_sr'] ?? '')) ?></span>
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/>
                             </svg>
@@ -531,7 +517,7 @@ require __DIR__ . '/includes/header.php';
                             data-reviews-next
                             aria-label="<?= esc((string) ($reviewsUi['next_group'] ?? '')) ?>"
                         >
-                            <span class="sr-only"><?= esc((string) ($offers['next_sr'] ?? '')) ?></span>
+                            <span class="sr-only"><?= esc((string) ($reviewsUi['next_sr'] ?? '')) ?></span>
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/>
                             </svg>

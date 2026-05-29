@@ -93,6 +93,8 @@ return [
         'carousel' => 'Recenzii clienți Aquamarine',
         'prev' => 'Recenzie anterioară',
         'next' => 'Recenzie următoare',
+        'prev_sr' => 'Anterior',
+        'next_sr' => 'Următor',
         'prev_group' => 'Grup anterior de recenzii',
         'next_group' => 'Grup următor de recenzii',
         'google_rating_sr' => 'Google: medie :rating din 5, :count recenzii',

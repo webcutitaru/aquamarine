@@ -67,10 +67,6 @@
       else el.removeAttribute('data-carousel-active');
     });
     syncOfferOverlay(slides[i]);
-    var links = root.querySelectorAll('[data-carousel-slide-link]');
-    links.forEach(function (a, j) {
-      a.setAttribute('tabindex', j === i ? '0' : '-1');
-    });
     if (dotsWrap) {
       var dots = dotsWrap.querySelectorAll('button[data-carousel-dot]');
       dots.forEach(function (d, j) {

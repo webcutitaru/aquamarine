@@ -94,6 +94,8 @@ return [
         'carousel' => 'Отзывы клиентов Aquamarine',
         'prev' => 'Предыдущий отзыв',
         'next' => 'Следующий отзыв',
+        'prev_sr' => 'Назад',
+        'next_sr' => 'Далее',
         'prev_group' => 'Предыдущая группа отзывов',
         'next_group' => 'Следующая группа отзывов',
         'google_rating_sr' => 'Google: средняя оценка :rating из 5, :count отзывов',

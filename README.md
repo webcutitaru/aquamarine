@@ -121,6 +121,8 @@ Importul **înlocuiește** catalogul de prețuri existent; lead-urile și oferte
 
 Pe un DB deja populat, rulați o dată `database/migrate_copy_feedback_2026.sql` (actualizează titlurile carousel, unități RU `шт.`/`кг`, câteva `service_ru`). Pentru catalog nou, folosiți `seed_prices_2026.sql` deja actualizat.
 
+Pentru bannerele homepage fără link la click pe imagine, rulați o dată `database/migrate_offers_clear_href.sql` (golește `homepage_offers.href`).
+
 ## Structură
 
 ```
