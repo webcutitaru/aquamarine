@@ -49,9 +49,11 @@ php database/create_admin.php admin ParolaVoastraSigura
 
 ## Deploy cPanel
 
-Deploy automat via `.cpanel.yml` (rsync; exclude `.env`, `database/`, `node_modules/`).
+Deploy automat via `.cpanel.yml` (rsync; exclude `.env`, `database/`, `node_modules/`, `data/contact_uploads/`).
 
 **Înainte de deploy:** rulați local `npm run build:css` — fișierul `assets/css/app.css` trebuie versionat / urcat pe server.
+
+**Dacă „Last Deployment” nu se actualizează:** deploy-ul a eșuat (verificați mesajul roșu sub butonul Deploy sau **Manage** → log). Cauze frecvente: `rsync` indisponibil sau eșec la `--delete`. `.cpanel.yml` folosește o singură comandă (`export` + `rsync` pe aceeași linie). După `git push`: **Update from Remote**, apoi **Deploy HEAD Commit**.
 
 **CSS:** după modificări de layout/clase Tailwind:
 
