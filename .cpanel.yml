@@ -1,4 +1,4 @@
+---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/aquamari1/public_html/
-    - /bin/cp -Ra . $DEPLOYPATH
+    - export DEPLOYPATH=/home/aquamari1/public_html/ && /bin/cp -Ra . "$DEPLOYPATH"

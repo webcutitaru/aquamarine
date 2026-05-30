@@ -49,14 +49,13 @@ php database/create_admin.php admin ParolaVoastraSigura
 
 ## Deploy cPanel
 
-Script minimal în [`.cpanel.yml`](.cpanel.yml) (2 linii, format cPanel):
+Script în [`.cpanel.yml`](.cpanel.yml) — **o singură linie** cu `&&` (ultimul format confirmat pe hosting; varianta cu 2 task-uri separate nu declanșează deploy):
 
 ```yaml
-export DEPLOYPATH=/home/aquamari1/public_html/
-/bin/cp -Ra . $DEPLOYPATH
+export DEPLOYPATH=/home/aquamari1/public_html/ && /bin/cp -Ra . "$DEPLOYPATH"
 ```
 
-Nu folosiți `rsync`, task-uri `git`, `rm` sau căi absolute în YAML — pe acest hosting pot opri deploy-ul fără mesaj clar.
+Nu folosiți `rsync`, task-uri `git`, `rm`, căi absolute sau YAML pe două linii fără `&&` — pe acest cont cPanel deploy-ul nu se finalizează.
 
 ### Local vs `public_html`
 
