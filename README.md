@@ -49,24 +49,35 @@ php database/create_admin.php admin ParolaVoastraSigura
 
 ## Deploy cPanel
 
-Deploy automat via [`.cpanel.yml`](.cpanel.yml) — **o singură linie** (variantă confirmată pe hosting):
+Script minimal în [`.cpanel.yml`](.cpanel.yml) (2 linii, format cPanel):
 
-`export DEPLOYPATH=/home/aquamari1/public_html/ && /bin/cp -Ra . "$DEPLOYPATH"`
+```yaml
+export DEPLOYPATH=/home/aquamari1/public_html/
+/bin/cp -Ra . $DEPLOYPATH
+```
 
-Nu folosiți `rsync` (lipsește pe server). Nu adăugați task-uri cu `git` sau căi absolute în `.cpanel.yml` — pot bloca deploy-ul fără mesaj clar.
+Nu folosiți `rsync`, task-uri `git`, `rm` sau căi absolute în YAML — pe acest hosting pot opri deploy-ul fără mesaj clar.
 
-**Upload-uri contact:** nu sunt în Git ([`.gitignore`](.gitignore): `data/contact_uploads/*`, doar `.gitkeep`). `cp` nu șterge pozele deja pe server.
+### Local vs `public_html`
 
-**Nu copiați în repo:** `.env`, poze lead-uri, `data/leads.ndjson`.
+| Rămâne local / nu în Git | La deploy (`cp`) |
+|--------------------------|------------------|
+| `.env`, `.env.local` (șabloane `.env.example` sunt în repo) | Nu sunt în repo → nu se copiază |
+| `data/contact_uploads/**` (poze clienți), doar `.gitkeep` în Git | Din repo: doar folder gol; **pozele de pe server nu se șterg** |
+| `data/leads.ndjson` | Nu e în repo |
+| `node_modules/`, `vendor/` | Dacă lipsesc din repo, nu se copiază |
 
-**Înainte de deploy:** rulați local `npm run build:css` — `assets/css/app.css` trebuie commitat.
+| Poate ajunge în `public_html` | Acces browser |
+|-------------------------------|---------------|
+| `database/`, `includes/` (din repo) | Blocat: [.htaccess](.htaccess), [database/.htaccess](database/.htaccess) |
 
-**Pași cPanel (două acțiuni separate):**
+Migrări SQL: rulați din `~/repositories/aquamarine/database/` (SSH), nu prin URL.
 
-1. **Update from Remote** — aduce commit-urile din GitHub în `repositories/aquamarine` (nu publică site-ul).
-2. **Deploy HEAD Commit** — copiază în `public_html`.
+**Înainte de deploy:** `npm run build:css` — commit `assets/css/app.css`.
 
-**Verificare post-deploy:** în cPanel, **Last Deployment** = dată și SHA recente; pe site (View Source homepage), lipsește `data-carousel-slide-link` după fix-ul slider. Hard refresh dacă pare vechi (cache).
+**Pași cPanel:** 1) **Update from Remote** 2) **Deploy HEAD Commit**
+
+**Verificare:** **Last Deployment** actualizat; View Source homepage — fără `data-carousel-slide-link` după fix slider.
 
 **CSS:** după modificări de layout/clase Tailwind:
 

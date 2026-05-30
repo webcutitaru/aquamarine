@@ -1,7 +1,11 @@
 .env
+.env.*
+!.env.example
+!.env.production.example
 data/leads.ndjson
-data/contact_uploads/*
+data/contact_uploads/**
 !data/contact_uploads/.gitkeep
+deploy-revision.txt
 vendor/
 composer.phar
 node_modules/
