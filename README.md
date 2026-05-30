@@ -49,9 +49,13 @@ php database/create_admin.php admin ParolaVoastraSigura
 
 ## Deploy cPanel
 
-Deploy automat via [`.cpanel.yml`](.cpanel.yml): `cp -Ra` (hosting-ul nu are `rsync` disponibil), apoi șterge din `public_html` ce nu trebuie public: `.git`, `node_modules`, `database`.
+Deploy automat via [`.cpanel.yml`](.cpanel.yml) — **o singură linie** (variantă confirmată pe hosting):
 
-**Upload-uri contact:** nu sunt în Git ([`.gitignore`](.gitignore): `data/contact_uploads/*`, doar `.gitkeep`). La deploy, `cp` nu șterge pozele deja pe server — rămân în `data/contact_uploads/`.
+`export DEPLOYPATH=/home/aquamari1/public_html/ && /bin/cp -Ra . "$DEPLOYPATH"`
+
+Nu folosiți `rsync` (lipsește pe server). Nu adăugați task-uri cu `git` sau căi absolute în `.cpanel.yml` — pot bloca deploy-ul fără mesaj clar.
+
+**Upload-uri contact:** nu sunt în Git ([`.gitignore`](.gitignore): `data/contact_uploads/*`, doar `.gitkeep`). `cp` nu șterge pozele deja pe server.
 
 **Nu copiați în repo:** `.env`, poze lead-uri, `data/leads.ndjson`.
 
@@ -60,11 +64,9 @@ Deploy automat via [`.cpanel.yml`](.cpanel.yml): `cp -Ra` (hosting-ul nu are `rs
 **Pași cPanel (două acțiuni separate):**
 
 1. **Update from Remote** — aduce commit-urile din GitHub în `repositories/aquamarine` (nu publică site-ul).
-2. **Deploy HEAD Commit** — rulează `.cpanel.yml` și copiază în `public_html`.
+2. **Deploy HEAD Commit** — copiază în `public_html`.
 
-**Verificare că deploy-ul a ajuns live:** deschideți `https://aquamarine.md/deploy-revision.txt` — hash-ul trebuie să coincidă cu ultimul commit din cPanel (HEAD). Log: `/home/aquamari1/deploy.log` pe server (File Manager).
-
-Dacă hash-ul din `deploy-revision.txt` e vechi dar HEAD în Git e nou: ați făcut doar Update from Remote, fără Deploy. Dacă ambele sunt noi dar site-ul pare vechi: cache browser/CDN sau document root diferit de `public_html` (verificați în cPanel → Domains).
+**Verificare post-deploy:** în cPanel, **Last Deployment** = dată și SHA recente; pe site (View Source homepage), lipsește `data-carousel-slide-link` după fix-ul slider. Hard refresh dacă pare vechi (cache).
 
 **CSS:** după modificări de layout/clase Tailwind:
 

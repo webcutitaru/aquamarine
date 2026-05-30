@@ -1,7 +1,4 @@
 ---
 deployment:
   tasks:
-    - /bin/cp -Ra /home/aquamari1/repositories/aquamarine/. /home/aquamari1/public_html/
-    - /bin/rm -rf /home/aquamari1/public_html/.git /home/aquamari1/public_html/node_modules /home/aquamari1/public_html/database
-    - /usr/bin/git -C /home/aquamari1/repositories/aquamarine rev-parse HEAD > /home/aquamari1/public_html/deploy-revision.txt
-    - /bin/sh -c 'echo "$(date -Iseconds) $(/usr/bin/git -C /home/aquamari1/repositories/aquamarine rev-parse --short HEAD)" >> /home/aquamari1/deploy.log'
+    - export DEPLOYPATH=/home/aquamari1/public_html/ && /bin/cp -Ra . "$DEPLOYPATH"
