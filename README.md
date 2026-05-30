@@ -57,7 +57,14 @@ Deploy automat via [`.cpanel.yml`](.cpanel.yml): `cp -Ra` (hosting-ul nu are `rs
 
 **Înainte de deploy:** rulați local `npm run build:css` — `assets/css/app.css` trebuie commitat.
 
-**Pași cPanel:** `git push` → **Update from Remote** → **Deploy HEAD Commit**. Dacă deploy eșuează, citiți mesajul roșu sub buton.
+**Pași cPanel (două acțiuni separate):**
+
+1. **Update from Remote** — aduce commit-urile din GitHub în `repositories/aquamarine` (nu publică site-ul).
+2. **Deploy HEAD Commit** — rulează `.cpanel.yml` și copiază în `public_html`.
+
+**Verificare că deploy-ul a ajuns live:** deschideți `https://aquamarine.md/deploy-revision.txt` — hash-ul trebuie să coincidă cu ultimul commit din cPanel (HEAD). Log: `/home/aquamari1/deploy.log` pe server (File Manager).
+
+Dacă hash-ul din `deploy-revision.txt` e vechi dar HEAD în Git e nou: ați făcut doar Update from Remote, fără Deploy. Dacă ambele sunt noi dar site-ul pare vechi: cache browser/CDN sau document root diferit de `public_html` (verificați în cPanel → Domains).
 
 **CSS:** după modificări de layout/clase Tailwind:
 
