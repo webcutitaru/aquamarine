@@ -55,9 +55,9 @@ php database/create_admin.php admin ParolaVoastraSigura
 export DEPLOYPATH=/home/aquamari1/public_html/ && sh scripts/cpanel-deploy.sh
 ```
 
-Copierea rulează în [`scripts/cpanel-deploy.sh`](scripts/cpanel-deploy.sh): `cp -R *` (fără `.git` / `node_modules` din repo) + `.htaccess` și `data/.htaccess`. Nu folosiți `cp -Ra .` — copiază `.git` și poate bloca deploy-ul fără mesaj în UI.
+Copierea rulează în [`scripts/cpanel-deploy.sh`](scripts/cpanel-deploy.sh): copiază mai întâi toate `.htaccess` (cu `chmod 644`), apoi `cp -Ra .`, apoi șterge `.git` / `node_modules` din `public_html` dacă au fost copiate.
 
-Nu folosiți `rsync`, task-uri `git`, `rm`, căi absolute sau YAML pe două linii fără `&&`.
+Nu folosiți `rsync`, task-uri `git` în YAML, căi absolute sau YAML pe două linii fără `&&`.
 
 ### Local vs `public_html`
 
@@ -78,11 +78,18 @@ Migrări SQL: rulați din `~/repositories/aquamarine/database/` (SSH), nu prin U
 
 **Pași cPanel:** 1) **Update from Remote** 2) **Deploy HEAD Commit**
 
-**Verificare:** **Last Deployment** = SHA nou (nu rămâne blocat la un commit vechi); View Source homepage — fără `data-carousel-slide-link` după fix slider.
+**Checklist post-deploy:**
 
-**Dacă deploy tot nu actualizează Last Deployment (fără SSH):** în File Manager copiați manual din `repositories/aquamarine` în `public_html` (aceeași structură de foldere), minim: `index.php`, `assets/js/main.js`, `includes/`, `assets/css/app.css`, `.htaccess`.
+- [ ] **Last Deployment** = SHA nou
+- [ ] Site se deschide (fără 403 Forbidden)
+- [ ] `public_html/.htaccess` există, Permissions **644** (nu doar în `repositories/aquamarine`)
+- [ ] View Source homepage — fără `data-carousel-slide-link` după fix slider
 
-**403 „Server unable to read htaccess file”:** în File Manager → `public_html` → `.htaccess` → **Permissions** → `644`. Repetați deploy după update la `scripts/cpanel-deploy.sh` (setează `chmod 644` pe toate `.htaccess`).
+**403 „Server unable to read htaccess file”:** Apache citește **`public_html/.htaccess`**, nu cel din repo. File Manager → `public_html` → `.htaccess` → **644**; dacă lipsește, copiați din `repositories/aquamarine/.htaccess`, apoi **Deploy HEAD Commit** din nou.
+
+**`.env` în `repositories/aquamarine`:** nu trebuie acolo (e în `.gitignore`); pe server folosiți `/home/aquamari1/.env`, nu `public_html/.env`.
+
+**Dacă deploy nu actualizează Last Deployment (fără SSH):** copiați manual din `repositories/aquamarine` în `public_html`: `index.php`, `assets/js/main.js`, `includes/`, `assets/css/app.css`, `.htaccess`.
 
 **CSS:** după modificări de layout/clase Tailwind:
 

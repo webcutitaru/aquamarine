@@ -3,7 +3,7 @@ set -e
 
 DEPLOYPATH="${DEPLOYPATH:-/home/aquamari1/public_html/}"
 
-cp -R * "$DEPLOYPATH"
+HTACCESS_PATHS=".htaccess data/.htaccess includes/.htaccess database/.htaccess"
 
 copy_htaccess() {
   src="$1"
@@ -15,7 +15,16 @@ copy_htaccess() {
   fi
 }
 
-copy_htaccess .htaccess "$DEPLOYPATH.htaccess"
-copy_htaccess data/.htaccess "$DEPLOYPATH/data/.htaccess"
-copy_htaccess includes/.htaccess "$DEPLOYPATH/includes/.htaccess"
-copy_htaccess database/.htaccess "$DEPLOYPATH/database/.htaccess"
+for rel in $HTACCESS_PATHS; do
+  copy_htaccess "$rel" "$DEPLOYPATH$rel"
+done
+
+cp -Ra . "$DEPLOYPATH"
+
+rm -rf "$DEPLOYPATH.git" "$DEPLOYPATHnode_modules" 2>/dev/null || true
+
+for rel in $HTACCESS_PATHS; do
+  if [ -f "$DEPLOYPATH$rel" ]; then
+    chmod 644 "$DEPLOYPATH$rel"
+  fi
+done
