@@ -49,11 +49,15 @@ php database/create_admin.php admin ParolaVoastraSigura
 
 ## Deploy cPanel
 
-Deploy automat via `.cpanel.yml` (rsync; exclude `.env`, `database/`, `node_modules/`, `data/contact_uploads/`).
+Deploy automat via [`.cpanel.yml`](.cpanel.yml) (`rsync` pe o singură linie cu `export`).
+
+**Exclude la deploy (nu se copiază / nu se șterg din dest prin sync):** `.env`, `.env.*`, `.git/`, `node_modules/`, `database/`, `data/contact_uploads/`, `data/leads.ndjson`, `composer.phar`, `vendor_upload_ready.zip`, `*.pdf`.
+
+**Git — upload-uri contact:** pozele din formular nu intră în repo (vezi [`.gitignore`](.gitignore): `data/contact_uploads/*`, păstrat doar `data/contact_uploads/.gitkeep`).
 
 **Înainte de deploy:** rulați local `npm run build:css` — fișierul `assets/css/app.css` trebuie versionat / urcat pe server.
 
-**Dacă „Last Deployment” nu se actualizează:** deploy-ul a eșuat (verificați mesajul roșu sub butonul Deploy sau **Manage** → log). Cauze frecvente: `rsync` indisponibil sau eșec la `--delete`. `.cpanel.yml` folosește o singură comandă (`export` + `rsync` pe aceeași linie). După `git push`: **Update from Remote**, apoi **Deploy HEAD Commit**.
+**Dacă „Last Deployment” nu se actualizează:** deploy-ul a eșuat (mesaj roșu sub Deploy sau **Manage** → log). După `git push`: **Update from Remote**, apoi **Deploy HEAD Commit**. Dacă `rsync` lipsește pe hosting, înlocuiți temporar task-ul din `.cpanel.yml` cu: `export DEPLOYPATH=/home/aquamari1/public_html/ && /bin/cp -Ra . "$DEPLOYPATH" && rm -rf "$DEPLOYPATH/.git"` (upload-urile rămân pe server pentru că nu sunt în Git; `cp` nu șterge fișiere extra din `contact_uploads`).
 
 **CSS:** după modificări de layout/clase Tailwind:
 
