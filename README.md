@@ -82,6 +82,8 @@ Migrări SQL: rulați din `~/repositories/aquamarine/database/` (SSH), nu prin U
 
 **Dacă deploy tot nu actualizează Last Deployment (fără SSH):** în File Manager copiați manual din `repositories/aquamarine` în `public_html` (aceeași structură de foldere), minim: `index.php`, `assets/js/main.js`, `includes/`, `assets/css/app.css`, `.htaccess`.
 
+**403 „Server unable to read htaccess file”:** în File Manager → `public_html` → `.htaccess` → **Permissions** → `644`. Repetați deploy după update la `scripts/cpanel-deploy.sh` (setează `chmod 644` pe toate `.htaccess`).
+
 **CSS:** după modificări de layout/clase Tailwind:
 
 ```bash

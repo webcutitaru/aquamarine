@@ -1,2 +1,7 @@
-# Blochează acces HTTP direct la lead-uri dacă aveți AllowOverride activ
-Require all denied
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
