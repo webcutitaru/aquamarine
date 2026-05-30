@@ -49,13 +49,15 @@ php database/create_admin.php admin ParolaVoastraSigura
 
 ## Deploy cPanel
 
-Script în [`.cpanel.yml`](.cpanel.yml) — **o singură linie** cu `&&` (ultimul format confirmat pe hosting; varianta cu 2 task-uri separate nu declanșează deploy):
+[`.cpanel.yml`](.cpanel.yml) — **o linie** cu `&&` (format confirmat pe hosting):
 
 ```yaml
-export DEPLOYPATH=/home/aquamari1/public_html/ && /bin/cp -Ra . "$DEPLOYPATH"
+export DEPLOYPATH=/home/aquamari1/public_html/ && sh scripts/cpanel-deploy.sh
 ```
 
-Nu folosiți `rsync`, task-uri `git`, `rm`, căi absolute sau YAML pe două linii fără `&&` — pe acest cont cPanel deploy-ul nu se finalizează.
+Copierea rulează în [`scripts/cpanel-deploy.sh`](scripts/cpanel-deploy.sh): `cp -R *` (fără `.git` / `node_modules` din repo) + `.htaccess` și `data/.htaccess`. Nu folosiți `cp -Ra .` — copiază `.git` și poate bloca deploy-ul fără mesaj în UI.
+
+Nu folosiți `rsync`, task-uri `git`, `rm`, căi absolute sau YAML pe două linii fără `&&`.
 
 ### Local vs `public_html`
 
@@ -76,7 +78,9 @@ Migrări SQL: rulați din `~/repositories/aquamarine/database/` (SSH), nu prin U
 
 **Pași cPanel:** 1) **Update from Remote** 2) **Deploy HEAD Commit**
 
-**Verificare:** **Last Deployment** actualizat; View Source homepage — fără `data-carousel-slide-link` după fix slider.
+**Verificare:** **Last Deployment** = SHA nou (nu rămâne blocat la un commit vechi); View Source homepage — fără `data-carousel-slide-link` după fix slider.
+
+**Dacă deploy tot nu actualizează Last Deployment (fără SSH):** în File Manager copiați manual din `repositories/aquamarine` în `public_html` (aceeași structură de foldere), minim: `index.php`, `assets/js/main.js`, `includes/`, `assets/css/app.css`, `.htaccess`.
 
 **CSS:** după modificări de layout/clase Tailwind:
 
