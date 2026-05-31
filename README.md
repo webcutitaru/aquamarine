@@ -55,11 +55,23 @@ php database/create_admin.php admin ParolaVoastraSigura
 export DEPLOYPATH=/home/aquamari1/public_html/ && sh scripts/cpanel-deploy.sh
 ```
 
-Copierea rulează în [`scripts/cpanel-deploy.sh`](scripts/cpanel-deploy.sh) (deploy-v3): toate `.htaccess` + `chmod 644` **înainte**, apoi `cp -R *` (fără `.git` din sursă), apoi `.htaccess` din nou (radăcina nu intră în `cp -R *`). **Nu folosiți `cp -Ra` în script** pe acest cont — blochează Last Deployment.
+Copierea rulează în [`scripts/cpanel-deploy.sh`](scripts/cpanel-deploy.sh) (deploy-v4): `chmod 755` pe `public_html`, toate `.htaccess` cu `cp` + `chmod 644` **strict** (înainte și după `cp -R *`), apoi fișierul **`.deploy-marker`** în `public_html` (dovadă că scriptul a rulat). **Nu folosiți `cp -Ra` în script** pe acest cont — blochează Last Deployment.
 
 Nu folosiți `rsync`, task-uri `git` în YAML, căi absolute sau YAML pe două linii fără `&&`.
 
-**Dacă site-ul e 403 înainte de deploy:** File Manager → `public_html` → verificați că `.htaccess` e **fișier** (nu folder) → Permissions **644** pe `.htaccess`, `data/.htaccess`, `includes/.htaccess`, `database/.htaccess`; dacă lipsește rădăcina, copiați din `repositories/aquamarine/.htaccess`, reîncărcați site-ul, apoi **Deploy HEAD Commit**. Opțional ștergeți din `public_html` folderele `.git/` sau `node_modules/` rămase de la deploy-uri vechi cu `cp -Ra`.
+**Deploy reușit:** **Last Deployment** = SHA nou **și** există `public_html/.deploy-marker` (nu doar 644 în `repositories/aquamarine`).
+
+### 403 persistă după 644
+
+Apache citește doar **`public_html/.htaccess`**. În File Manager → `public_html`:
+
+1. **Rename** `.htaccess` → `.htaccess.bak` → reîncarcă site-ul. Dacă merge (200), fișierul vechi era corupt/greșit.
+2. **New File** (nu folder) → `.htaccess` → paste din `repositories/aquamarine/.htaccess` sau, la test, din [`deploy/public_html.htaccess.minimal`](deploy/public_html.htaccess.minimal) (doar HTTPS/www).
+3. Permissions **644** pe `.htaccess`; folder **`public_html` = 755**.
+4. Dacă minimal merge dar `.htaccess` complet dă 403, raportați — posibilă incompatibilitate `FilesMatch` pe Apache-ul hostului.
+5. **Deploy HEAD Commit** după fix manual pentru cod nou.
+
+Opțional: ștergeți din `public_html` `.git/` sau `node_modules/` rămase de la deploy-uri vechi cu `cp -Ra`.
 
 ### Local vs `public_html`
 
@@ -83,11 +95,10 @@ Migrări SQL: rulați din `~/repositories/aquamarine/database/` (SSH), nu prin U
 **Checklist post-deploy:**
 
 - [ ] **Last Deployment** = SHA nou
+- [ ] `public_html/.deploy-marker` există (deploy-v4)
 - [ ] Site se deschide (fără 403 Forbidden)
-- [ ] `public_html/.htaccess` există, Permissions **644** (nu doar în `repositories/aquamarine`)
+- [ ] `public_html/.htaccess` = **fișier**, Permissions **644**
 - [ ] View Source homepage — fără `data-carousel-slide-link` după fix slider
-
-**403 „Server unable to read htaccess file”:** Apache citește doar **`public_html/.htaccess`** (644 acolo repară site-ul; 644 în `repositories/aquamarine` nu). Pașii imediați sunt în paragraful de mai sus; după fix manual, rulați deploy pentru cod nou.
 
 **`.env` în `repositories/aquamarine`:** nu trebuie acolo (e în `.gitignore`); pe server folosiți `/home/aquamari1/.env`, nu `public_html/.env`.
 

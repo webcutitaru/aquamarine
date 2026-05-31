@@ -1,0 +1,11 @@
+# Fallback manual în public_html/.htaccess dacă varianta completă dă 403 pe hosting.
+# După ce site-ul merge, înlocuiți cu conținutul din .htaccess din repo (sau deploy HEAD).
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^www\.aquamarine\.md$ [NC]
+    RewriteRule ^ https://aquamarine.md%{REQUEST_URI} [L,R=301]
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP_HOST} ^(www\.)?aquamarine\.md$ [NC]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
