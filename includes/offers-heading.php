@@ -24,11 +24,6 @@ function offers_default_heading_lines(): array
 function offers_heading_lines_from_string(string $heading): array
 {
     [$d1, $d2] = offers_default_heading_lines();
-    $heading = trim($heading);
-
-    if ($heading !== '' && ! str_contains($heading, '|')) {
-        return [$d1 !== '' ? $d1 : $heading, $d2];
-    }
 
     return aquamarine_heading_lines($heading, $d1, $d2);
 }

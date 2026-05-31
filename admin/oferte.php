@@ -115,6 +115,7 @@ $adminContent = static function () use ($offers, $defaultContent): void {
             <div>
                 <label class="text-xs text-slate-500">Imagine *</label>
                 <input class="mt-1 block w-full text-sm" type="file" name="image" accept="image/jpeg,image/png,image/webp" required>
+                <p class="mt-1 text-xs text-slate-500">Recomandat: 1920×1080 px, JPG/PNG/WebP, max 2 MB. Subiectul important în centru.</p>
             </div>
             <div>
                 <label class="text-xs text-slate-500">Ordine</label>
@@ -131,7 +132,7 @@ $adminContent = static function () use ($offers, $defaultContent): void {
             <div class="sm:col-span-2">
                 <label class="text-xs text-slate-500">Titlu (RO) *</label>
                 <input class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" name="heading" value="<?= esc($defaultContent['heading']) ?>" required>
-                <p class="mt-1 text-xs text-slate-500">Două rânduri pe homepage: folosiți <code class="rounded bg-slate-100 px-1">|</code> între rând 1 și rând 2 (ex.: Curățătorie profesională Aquamarine|în Bălți, Edineț…).</p>
+                <p class="mt-1 text-xs text-slate-500">Un singur rând = un singur titlu afișat. Pentru două rânduri, folosiți <code class="rounded bg-slate-100 px-1">|</code> între ele (ex.: Promoție de vară|Reduceri 20%).</p>
             </div>
             <div class="sm:col-span-2">
                 <label class="text-xs text-slate-500">Titlu (RU)</label>
@@ -177,6 +178,7 @@ $adminContent = static function () use ($offers, $defaultContent): void {
                         <div class="sm:col-span-2">
                             <label class="text-xs text-slate-500">Înlocuiește imagine (opțional)</label>
                             <input class="mt-1 block w-full text-sm" type="file" name="image" accept="image/jpeg,image/png,image/webp">
+                            <p class="mt-1 text-xs text-slate-500">Recomandat: 1920×1080 px, max 2 MB.</p>
                         </div>
                         <div>
                             <label class="text-xs text-slate-500">Etichetă RO</label>
@@ -189,6 +191,7 @@ $adminContent = static function () use ($offers, $defaultContent): void {
                         <div class="sm:col-span-2">
                             <label class="text-xs text-slate-500">Titlu RO</label>
                             <input class="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm" name="heading" value="<?= esc((string) ($offer['heading'] ?? '')) ?>">
+                            <p class="mt-1 text-xs text-slate-500">Un singur rând = un titlu. Pentru două rânduri, separați cu <code class="rounded bg-slate-100 px-1">|</code>.</p>
                         </div>
                         <div class="sm:col-span-2">
                             <label class="text-xs text-slate-500">Titlu RU</label>
