@@ -20,7 +20,7 @@ cp .env.example .env
 ```
 
 1. Creați baza `aquamarine` în phpMyAdmin
-2. Importați `database/schema.sql`
+2. Importați `database/schema.sql` (folder `database/` este local, nu pe GitHub)
 3. Populați date inițiale:
 
 ```bash
@@ -55,7 +55,7 @@ php database/create_admin.php admin ParolaVoastraSigura
 export DEPLOYPATH=/home/aquamari1/public_html/ && sh scripts/cpanel-deploy.sh
 ```
 
-Copierea rulează în [`scripts/cpanel-deploy.sh`](scripts/cpanel-deploy.sh) (deploy-v4): `chmod 755` pe `public_html`, toate `.htaccess` cu `cp` + `chmod 644` **strict** (înainte și după `cp -R *`), apoi fișierul **`.deploy-marker`** în `public_html` (dovadă că scriptul a rulat). **Nu folosiți `cp -Ra` în script** pe acest cont — blochează Last Deployment.
+Copierea rulează în [`scripts/cpanel-deploy.sh`](scripts/cpanel-deploy.sh) (deploy-v5): listă albă (`admin`, `assets`, `data`, `includes`, `lang`, `ru`, `*.php`, PDF, `composer.*`, `robots.txt`) — **fără** `database/`, `scripts/`, `deploy/`, `README`, `package.json`, `.cpanel.yml`. Apoi **`.deploy-marker`**. **Nu folosiți `cp -Ra` în script** pe acest cont.
 
 Nu folosiți `rsync`, task-uri `git` în YAML, căi absolute sau YAML pe două linii fără `&&`.
 
@@ -73,20 +73,40 @@ Apache citește doar **`public_html/.htaccess`**. În File Manager → `public_h
 
 Opțional: ștergeți din `public_html` `.git/` sau `node_modules/` rămase de la deploy-uri vechi cu `cp -Ra`.
 
-### Local vs `public_html`
+### Git vs local vs `public_html`
 
-| Rămâne local / nu în Git | La deploy (`cp`) |
-|--------------------------|------------------|
-| `.env`, `.env.local` (șabloane `.env.example` sunt în repo) | Nu sunt în repo → nu se copiază |
-| `data/contact_uploads/**` (poze clienți), doar `.gitkeep` în Git | Din repo: doar folder gol; **pozele de pe server nu se șterg** |
-| `data/leads.ndjson` | Nu e în repo |
-| `node_modules/`, `vendor/` | Dacă lipsesc din repo, nu se copiază |
+| Unde | Ce |
+|------|-----|
+| **GitHub** | Site PHP, `includes/`, `admin/`, `assets/`, `lang/`, `ru/`, `data/` (JSON + `.gitkeep`), `.env.example`, deploy config |
+| **Doar Mac (nu Git)** | `database/` (schema, migrări SQL), `.env` (test MAMP), `vendor/`, `node_modules/` |
+| **`public_html` (live)** | Doar ce copiază deploy-v5 + `vendor/` (upload/Composer separat) + `/home/aquamari1/.env` |
 
-| Poate ajunge în `public_html` | Acces browser |
-|-------------------------------|---------------|
-| `database/`, `includes/` (din repo) | Blocat: [.htaccess](.htaccess), [database/.htaccess](database/.htaccess) |
+| La deploy | Comportament |
+|-----------|----------------|
+| `.env`, `.env.local` | Nu se copiază |
+| `database/` | **Nu** se copiază în `public_html` |
+| `data/contact_uploads/**` | Din repo: doar `.gitkeep`; pozele existente pe server rămân |
+| `vendor/` | Nu e în Git; păstrați/actualizați manual pe server dacă e necesar |
 
-Migrări SQL: rulați din `~/repositories/aquamarine/database/` (SSH), nu prin URL.
+**SQL / CLI:** `php database/...` din `~/repositories/aquamarine/` pe server (după clone Git) sau local MAMP — **nu** din URL și **nu** din `public_html/database/`.
+
+### Curățare `public_html` (o dată, File Manager)
+
+Ștergeți (nu afectează site-ul dacă `vendor/` și `.env` producție sunt OK):
+
+| Șterge | Motiv |
+|--------|--------|
+| `.git/` | Rămas din deploy vechi; risc securitate |
+| `__MACOSX/` | Gunoi macOS |
+| `database/` | Nu trebuie live; migrări din repo pe server |
+| `error_log` | Log PHP, nu site |
+| `scripts/`, `deploy/` | Doar deploy Git |
+| `README.md`, `.gitignore`, `.cpanel.yml` | Doar dev |
+| `package.json`, `package-lock.json`, `tailwind.config.js` | Build local |
+| `assets/css/app.src.css` | Sursă Tailwind; live = `app.css` |
+| `.env`, `.env.local` (dacă există) | Secret; folosiți `/home/aquamari1/.env` |
+
+**Nu ștergeți:** `index.php`, `includes/`, `admin/`, `assets/`, `data/`, `lang/`, `ru/`, `vendor/`, `.htaccess`, PDF prețuri, `composer.json`/`lock` (dacă folosiți Composer pe server), `.deploy-marker`.
 
 **Înainte de deploy:** `npm run build:css` — commit `assets/css/app.css`.
 
@@ -117,7 +137,7 @@ npm run build:css
 3. `ALLOW_SETUP_CHECK=false` în `.env` (implicit)
 4. Verificați după deploy:
    - `curl -I https://aquamarine.md/sitemap.php` → 200
-   - `curl -I https://aquamarine.md/database/schema.sql` → 403
+   - `curl -I https://aquamarine.md/database/schema.sql` → 404 sau 403 (fără folder `database/` în `public_html` = OK)
    - `curl -I https://www.aquamarine.md/` → 301 → `aquamarine.md`
 
 ### Go-live checklist
@@ -177,11 +197,14 @@ Pentru bannerele homepage fără link la click pe imagine, rulați o dată `data
 ## Structură
 
 ```
-includes/       bootstrap, config, DB, i18n, repositories
-admin/          panou CRM (lead-uri, prețuri, oferte)
-assets/css/     app.css (build Tailwind) + app.src.css
-database/       schema SQL + scripturi CLI (nu se deploy-ează)
-deploy/         snippet nginx pentru producție
-lang/ro|ru/     texte pagini
-data/           JSON seed + upload-uri contact (blocate HTTP)
+includes/       bootstrap, config, DB, i18n, repositories  → Git + public_html
+admin/          panou CRM                                   → Git + public_html
+assets/css/     app.css (build) + app.src.css (local build) → Git; live doar app.css
+database/       schema SQL + migrări (local + server repo)  → NU în Git / NU în public_html
+deploy/         nginx snippet, htaccess minimal             → Git; NU în public_html
+scripts/        cpanel-deploy.sh                            → Git; NU în public_html
+lang/, ru/      texte pagini                                → Git + public_html
+data/           JSON + upload-uri contact                   → Git + public_html (uploads locale)
 ```
+
+**Backup:** păstrați copia folderului `database/` pe Mac (nu mai e pe GitHub după curățare).
